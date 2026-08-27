@@ -37,97 +37,95 @@ export const ProgressHistoryPage: React.FC = () => {
   }));
 
   return (
-    <div className="space-y-10 py-6 max-w-7xl mx-auto px-4 sm:px-6 font-sans">
+    <div className="space-y-8 py-8 max-w-5xl mx-auto px-4 font-sans">
       {/* 1. Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+      <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <History className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider">Longitudinal Analytics</span>
+            <History className="w-4 h-4 text-black" />
+            <span className="text-xs font-black uppercase text-black font-mono">Progress History</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
             Speaker Progress & Skill Trajectory
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+          <p className="text-xs sm:text-sm font-medium text-zinc-700 mt-1">
             Measurable tracking across vocal modulation, pace stability, and filler word elimination.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/topics"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 text-zinc-950 font-semibold text-xs hover:bg-emerald-400 active:scale-95 transition-all shadow-md shadow-emerald-500/20"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Practice Next Topic</span>
-          </Link>
-        </div>
+        <Link
+          to="/topics"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FFE600] border-2 border-black text-black font-bold text-xs shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex-shrink-0"
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Practice Next Topic</span>
+        </Link>
       </div>
 
       {/* 2. Key Trend Summary Highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a]">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
-            <span className="text-xs font-mono uppercase">Overall Score Growth</span>
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+        <div className="p-5 rounded-2xl bg-white border-2 border-black shadow-neo">
+          <div className="flex items-center justify-between text-black mb-1">
+            <span className="text-xs font-black uppercase font-mono">Overall Score</span>
+            <TrendingUp className="w-4 h-4 text-black" />
           </div>
-          <div className="text-2xl font-bold font-mono text-white">64 → 81</div>
-          <p className="text-xs text-emerald-400 font-mono mt-1">+26.5% overall gain</p>
+          <div className="text-3xl font-black font-mono text-black">64 → 81</div>
+          <p className="text-xs font-bold text-emerald-700 font-mono mt-1">+26.5% gain</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a]">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
-            <span className="text-xs font-mono uppercase">Filler Reduction</span>
-            <Ban className="w-4 h-4 text-rose-400" />
+        <div className="p-5 rounded-2xl bg-white border-2 border-black shadow-neo">
+          <div className="flex items-center justify-between text-black mb-1">
+            <span className="text-xs font-black uppercase font-mono">Filler Drop</span>
+            <Ban className="w-4 h-4 text-black" />
           </div>
-          <div className="text-2xl font-bold font-mono text-white">16 → 5 <span className="text-xs text-zinc-500">count</span></div>
-          <p className="text-xs text-emerald-400 font-mono mt-1">-68.7% crutch word drop</p>
+          <div className="text-3xl font-black font-mono text-black">16 → 5</div>
+          <p className="text-xs font-bold text-emerald-700 font-mono mt-1">-68.7% fillers</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a]">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
-            <span className="text-xs font-mono uppercase">Cadence Calibration</span>
-            <Gauge className="w-4 h-4 text-cyan-400" />
+        <div className="p-5 rounded-2xl bg-white border-2 border-black shadow-neo">
+          <div className="flex items-center justify-between text-black mb-1">
+            <span className="text-xs font-black uppercase font-mono">Cadence</span>
+            <Gauge className="w-4 h-4 text-black" />
           </div>
-          <div className="text-2xl font-bold font-mono text-white">172 → 139 <span className="text-xs text-zinc-500">WPM</span></div>
-          <p className="text-xs text-emerald-400 font-mono mt-1">Calibrated into ideal band</p>
+          <div className="text-3xl font-black font-mono text-black">139 <span className="text-xs font-bold">WPM</span></div>
+          <p className="text-xs font-bold text-blue-700 font-mono mt-1">Ideal Band</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a]">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
-            <span className="text-xs font-mono uppercase">Pitch Dynamic Range</span>
-            <Activity className="w-4 h-4 text-purple-400" />
+        <div className="p-5 rounded-2xl bg-white border-2 border-black shadow-neo">
+          <div className="flex items-center justify-between text-black mb-1">
+            <span className="text-xs font-black uppercase font-mono">Pitch Variation</span>
+            <Activity className="w-4 h-4 text-black" />
           </div>
-          <div className="text-2xl font-bold font-mono text-white">14.2 → 28.4 <span className="text-xs text-zinc-500">Hz</span></div>
-          <p className="text-xs text-emerald-400 font-mono mt-1">Monotone → Natural</p>
+          <div className="text-3xl font-black font-mono text-black">±28.4 <span className="text-xs font-bold">Hz</span></div>
+          <p className="text-xs font-bold text-purple-700 font-mono mt-1">Natural Flow</p>
         </div>
       </div>
 
       {/* 3. Longitudinal Progress Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Score Progression Chart */}
-        <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+        <div className="p-6 rounded-2xl bg-white border-2 border-black shadow-neo space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b-2 border-black">
             <div>
-              <h3 className="text-sm font-semibold text-white">Overall Coaching Score Progression</h3>
-              <p className="text-xs text-zinc-400">Chronological trend across completed sessions</p>
+              <h3 className="text-sm font-black text-black">Overall Coaching Score Progression</h3>
+              <p className="text-xs text-zinc-600 font-medium">Chronological trend across completed sessions</p>
             </div>
-            <span className="text-xs font-mono text-emerald-400">+17 Points</span>
+            <span className="text-xs font-black font-mono px-2.5 py-0.5 rounded-full bg-[#51CF66] border border-black text-black">+17 Pts</span>
           </div>
 
-          <div className="w-full h-60 font-sans">
+          <div className="w-full h-64 font-sans p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                <XAxis dataKey="name" stroke="#71717a" fontSize={11} />
-                <YAxis domain={[50, 100]} stroke="#71717a" fontSize={11} />
+              <LineChart data={chartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+                <XAxis dataKey="name" stroke="#000000" fontSize={11} tickLine={false} />
+                <YAxis domain={[50, 100]} stroke="#000000" fontSize={11} tickLine={false} />
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-zinc-900 border border-zinc-700 p-2.5 rounded-lg text-xs font-mono">
-                          <p className="text-zinc-400">{label}</p>
-                          <p className="text-emerald-400 font-bold">Score: {payload[0].value} / 100</p>
+                        <div className="bg-[#FFE600] border-2 border-black p-2.5 rounded-lg shadow-neo-sm text-xs font-mono text-black font-bold">
+                          <p>{label}</p>
+                          <p>Score: {payload[0].value} / 100</p>
                         </div>
                       );
                     }
@@ -137,10 +135,10 @@ export const ProgressHistoryPage: React.FC = () => {
                 <Line
                   type="monotone"
                   dataKey="score"
-                  stroke="#10b981"
+                  stroke="#000000"
                   strokeWidth={3}
-                  dot={{ fill: '#10b981', r: 4 }}
-                  activeDot={{ r: 6, fill: '#10b981' }}
+                  dot={{ fill: '#69D2E7', r: 5, stroke: '#000000', strokeWidth: 2 }}
+                  activeDot={{ r: 7, fill: '#FFE600', stroke: '#000000', strokeWidth: 2 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -148,28 +146,28 @@ export const ProgressHistoryPage: React.FC = () => {
         </div>
 
         {/* Filler Word Reduction Curve */}
-        <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+        <div className="p-6 rounded-2xl bg-white border-2 border-black shadow-neo space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b-2 border-black">
             <div>
-              <h3 className="text-sm font-semibold text-white">Filler Word Elimination Curve</h3>
-              <p className="text-xs text-zinc-400">Total filler words detected per session</p>
+              <h3 className="text-sm font-black text-black">Filler Word Elimination Curve</h3>
+              <p className="text-xs text-zinc-600 font-medium">Total filler words detected per session</p>
             </div>
-            <span className="text-xs font-mono text-rose-400">-68% Reduction</span>
+            <span className="text-xs font-black font-mono px-2.5 py-0.5 rounded-full bg-[#FF6B6B] border border-black text-black">-68% Drop</span>
           </div>
 
-          <div className="w-full h-60 font-sans">
+          <div className="w-full h-64 font-sans p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                <XAxis dataKey="name" stroke="#71717a" fontSize={11} />
-                <YAxis domain={[0, 20]} stroke="#71717a" fontSize={11} />
+              <LineChart data={chartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+                <XAxis dataKey="name" stroke="#000000" fontSize={11} tickLine={false} />
+                <YAxis domain={[0, 20]} stroke="#000000" fontSize={11} tickLine={false} />
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-zinc-900 border border-zinc-700 p-2.5 rounded-lg text-xs font-mono">
-                          <p className="text-zinc-400">{label}</p>
-                          <p className="text-rose-400 font-bold">Fillers: {payload[0].value} words</p>
+                        <div className="bg-[#FF6B6B] border-2 border-black p-2.5 rounded-lg shadow-neo-sm text-xs font-mono text-black font-bold">
+                          <p>{label}</p>
+                          <p>Fillers: {payload[0].value} words</p>
                         </div>
                       );
                     }
@@ -179,10 +177,10 @@ export const ProgressHistoryPage: React.FC = () => {
                 <Line
                   type="monotone"
                   dataKey="fillers"
-                  stroke="#f43f5e"
+                  stroke="#000000"
                   strokeWidth={3}
-                  dot={{ fill: '#f43f5e', r: 4 }}
-                  activeDot={{ r: 6, fill: '#f43f5e' }}
+                  dot={{ fill: '#FF6B6B', r: 5, stroke: '#000000', strokeWidth: 2 }}
+                  activeDot={{ r: 7, fill: '#FFE600', stroke: '#000000', strokeWidth: 2 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -190,106 +188,96 @@ export const ProgressHistoryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Strengths, Growth Areas & Active Goals */}
+      {/* 4. Strengths, Growth Areas & Goals */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Strengths */}
-        <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-zinc-800">
-            <Award className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-semibold text-white">Demonstrated Strengths</h3>
+        <div className="p-6 rounded-2xl bg-white border-2 border-black shadow-neo space-y-3">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-black">
+            <Award className="w-4 h-4 text-black" />
+            <h3 className="text-sm font-black text-black">Demonstrated Strengths</h3>
           </div>
-          <ul className="space-y-2 text-xs text-zinc-300">
+          <ul className="space-y-2 text-xs font-medium text-zinc-800">
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span><strong>Logical Structure:</strong> Consistent three-act outline (Hook, Body, Conclusion).</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <span><strong>Logical Structure:</strong> Consistent three-act outline.</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span><strong>Conversational Pace:</strong> Stabilized within the optimal 130–160 WPM bandwidth.</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <span><strong>Conversational Pace:</strong> Stable within 130–160 WPM.</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span><strong>Rhetorical Pauses:</strong> Deliberate silence at major premise transitions.</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <span><strong>Rhetorical Pauses:</strong> Deliberate silence at transitions.</span>
             </li>
           </ul>
         </div>
 
-        {/* Areas for Growth */}
-        <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-zinc-800">
-            <Target className="w-4 h-4 text-amber-400" />
-            <h3 className="text-sm font-semibold text-white">Target Opportunities</h3>
+        <div className="p-6 rounded-2xl bg-white border-2 border-black shadow-neo space-y-3">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-black">
+            <Target className="w-4 h-4 text-black" />
+            <h3 className="text-sm font-black text-black">Target Opportunities</h3>
           </div>
-          <ul className="space-y-2 text-xs text-zinc-300">
+          <ul className="space-y-2 text-xs font-medium text-zinc-800">
             <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-amber-950 text-amber-400 font-mono text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">!</span>
-              <span><strong>Downward Pitch Cadence:</strong> Inflect pitch downward on concluding statements.</span>
+              <span className="w-4 h-4 rounded-full bg-[#FFE600] border border-black font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">!</span>
+              <span><strong>Downward Pitch Cadence:</strong> Inflect pitch downward on conclusions.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-amber-950 text-amber-400 font-mono text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">!</span>
-              <span><strong>Crutch Elimination:</strong> Eliminate habitual "basically" during transitions.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-4 h-4 rounded-full bg-amber-950 text-amber-400 font-mono text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">!</span>
-              <span><strong>Counterargument Rigor:</strong> Explicitly address opposing perspectives.</span>
+              <span className="w-4 h-4 rounded-full bg-[#FFE600] border border-black font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">!</span>
+              <span><strong>Crutch Elimination:</strong> Eliminate habitual "basically".</span>
             </li>
           </ul>
         </div>
 
-        {/* Active Goal */}
-        <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-950/20 via-zinc-900 to-zinc-950 border border-emerald-800/40 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-zinc-800">
-            <Flame className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-semibold text-white">Current Milestone Goal</h3>
+        <div className="p-6 rounded-2xl bg-[#A78BFA] border-2 border-black shadow-neo space-y-3 text-black">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-black">
+            <Flame className="w-4 h-4 text-black" />
+            <h3 className="text-sm font-black">Current Milestone Goal</h3>
           </div>
-          <div className="space-y-2 text-xs text-zinc-300">
-            <p className="font-semibold text-white">Reduce filler words to &lt; 1.0 / min over the next 3 sessions.</p>
-            <p className="text-zinc-400 leading-relaxed">
-              Focus on replacing instantaneous hesitation sounds with a clean, comfortable 1-second breath pause.
-            </p>
-            <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden mt-3">
-              <div className="h-full bg-emerald-500 rounded-full" style={{ width: '70%' }} />
+          <div className="space-y-2 text-xs font-medium">
+            <p className="font-bold">Reduce filler words to &lt; 1.0 / min over the next 3 sessions.</p>
+            <div className="w-full h-3 bg-white border-2 border-black rounded-full overflow-hidden mt-2">
+              <div className="h-full bg-[#FFE600]" style={{ width: '70%' }} />
             </div>
-            <span className="text-[11px] font-mono text-emerald-400 block text-right">70% to goal</span>
+            <span className="text-[11px] font-mono font-bold block text-right">70% completed</span>
           </div>
         </div>
       </div>
 
-      {/* 5. Complete Session Log */}
-      <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
-          <h3 className="text-sm font-semibold text-white">Session History Log</h3>
-          <span className="text-xs font-mono text-zinc-500">Total 5 sessions recorded</span>
+      {/* 5. Complete Session Log Table */}
+      <div className="p-6 rounded-2xl bg-white border-2 border-black shadow-neo space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-black">
+          <h3 className="text-sm font-black text-black">Session History Log</h3>
+          <span className="text-xs font-mono font-bold text-zinc-600">Total {sessionsHistory.length} sessions</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="text-zinc-500 border-b border-zinc-800/80">
-                <th className="pb-3 font-medium">Session / Topic</th>
-                <th className="pb-3 font-medium">Category</th>
-                <th className="pb-3 font-medium">Date</th>
-                <th className="pb-3 font-medium">Pace</th>
-                <th className="pb-3 font-medium">Fillers</th>
-                <th className="pb-3 font-medium">Pitch σ</th>
-                <th className="pb-3 font-medium text-right">Score</th>
-                <th className="pb-3 font-medium text-right">Action</th>
+              <tr className="text-black border-b-2 border-black font-bold bg-[#F7F4EB]">
+                <th className="p-3">Topic Title</th>
+                <th className="p-3">Category</th>
+                <th className="p-3">Date</th>
+                <th className="p-3">Pace</th>
+                <th className="p-3">Fillers</th>
+                <th className="p-3">Pitch σ</th>
+                <th className="p-3 text-right">Score</th>
+                <th className="p-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/50">
+            <tbody className="divide-y border-b-2 border-black">
               {sessionsHistory.map((s) => (
-                <tr key={s.id} className="hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 text-white font-semibold font-sans max-w-xs truncate">{s.topicTitle}</td>
-                  <td className="py-3 text-zinc-400">{s.category}</td>
-                  <td className="py-3 text-zinc-500">{s.date}</td>
-                  <td className="py-3 text-zinc-300">{s.wpm} WPM</td>
-                  <td className="py-3 text-rose-400">{s.fillerCount}</td>
-                  <td className="py-3 text-purple-400">±{s.pitchStdDev} Hz</td>
-                  <td className="py-3 text-right text-emerald-400 font-bold">{s.overallScore}</td>
-                  <td className="py-3 text-right">
+                <tr key={s.id} className="hover:bg-[#FFE600]/30 transition-colors">
+                  <td className="p-3 text-black font-bold font-sans max-w-xs truncate">{s.topicTitle}</td>
+                  <td className="p-3 text-zinc-700 font-bold">{s.category}</td>
+                  <td className="p-3 text-zinc-600">{s.date}</td>
+                  <td className="p-3 text-zinc-800">{s.wpm} WPM</td>
+                  <td className="p-3 font-bold text-red-600">{s.fillerCount}</td>
+                  <td className="p-3 text-purple-700 font-bold">±{s.pitchStdDev} Hz</td>
+                  <td className="p-3 text-right font-black text-black text-sm">{s.overallScore}</td>
+                  <td className="p-3 text-right">
                     <Link
                       to="/results"
-                      className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 transition-colors"
+                      className="px-3 py-1 rounded-lg bg-[#FFE600] border-2 border-black text-black font-bold hover:bg-yellow-300 transition-colors"
                     >
                       Report
                     </Link>
@@ -303,3 +291,4 @@ export const ProgressHistoryPage: React.FC = () => {
     </div>
   );
 };
+

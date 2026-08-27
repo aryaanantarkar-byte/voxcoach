@@ -18,35 +18,37 @@ interface PitchChartProps {
 
 export const PitchChart: React.FC<PitchChartProps> = ({ data, averageHz }) => {
   return (
-    <div className="w-full h-64 font-sans">
+    <div className="w-full h-64 font-sans p-3 bg-white border-2 border-black rounded-xl shadow-neo-sm">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
           <defs>
             <linearGradient id="pitchGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+              <stop offset="5%" stopColor="#69D2E7" stopOpacity={0.6} />
+              <stop offset="95%" stopColor="#69D2E7" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
           <XAxis
             dataKey="timeSec"
-            stroke="#71717a"
+            stroke="#000000"
             fontSize={11}
+            tickLine={false}
             tickFormatter={(val) => `${val}s`}
           />
           <YAxis
             domain={['auto', 'auto']}
-            stroke="#71717a"
+            stroke="#000000"
             fontSize={11}
+            tickLine={false}
             tickFormatter={(val) => `${val}Hz`}
           />
           <Tooltip
             content={({ active, payload, label }) => {
               if (active && payload && payload.length) {
                 return (
-                  <div className="bg-zinc-900 border border-zinc-700 p-2.5 rounded-lg shadow-xl text-xs font-mono">
-                    <p className="text-zinc-400">Time: <span className="text-white font-semibold">{label}s</span></p>
-                    <p className="text-emerald-400 font-semibold">Pitch: {payload[0].value} Hz</p>
+                  <div className="bg-[#FFE600] border-2 border-black p-2.5 rounded-lg shadow-neo-sm text-xs font-mono text-black font-bold">
+                    <p>Time: {label}s</p>
+                    <p className="text-black">Pitch: {payload[0].value} Hz</p>
                   </div>
                 );
               }
@@ -55,20 +57,22 @@ export const PitchChart: React.FC<PitchChartProps> = ({ data, averageHz }) => {
           />
           <ReferenceLine
             y={averageHz}
-            stroke="#38bdf8"
+            stroke="#FF6B6B"
             strokeDasharray="4 4"
+            strokeWidth={2}
             label={{
               value: `Avg: ${Math.round(averageHz)}Hz`,
-              fill: '#38bdf8',
-              fontSize: 10,
+              fill: '#000000',
+              fontSize: 11,
+              fontWeight: 'bold',
               position: 'right',
             }}
           />
           <Area
             type="monotone"
             dataKey="pitchHz"
-            stroke="#10b981"
-            strokeWidth={2.5}
+            stroke="#000000"
+            strokeWidth={3}
             fillOpacity={1}
             fill="url(#pitchGradient)"
           />
@@ -77,3 +81,4 @@ export const PitchChart: React.FC<PitchChartProps> = ({ data, averageHz }) => {
     </div>
   );
 };
+

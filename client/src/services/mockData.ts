@@ -101,6 +101,182 @@ export const MOCK_TOPICS: ITopic[] = [
     usefulKeywords: ['CRISPR-Cas9', 'Germline editing', 'Genetic enhancement', 'Bioethics', 'Somatic cells', 'Socioeconomic disparity'],
     isAiGenerated: false,
     createdAt: '2025-01-22T11:00:00.000Z',
+  },
+  {
+    id: 'topic-5',
+    title: 'Central Bank Digital Currencies (CBDCs): Financial Innovation or Privacy Risk?',
+    category: 'Finance',
+    mode: 'debate',
+    difficulty: 'Intermediate',
+    explanation: 'Sovereign nations are developing digital fiat currencies issued directly by central banks. While CBDCs offer faster settlements and lower transaction friction, critics warn of programmable spending controls and complete loss of financial anonymity.',
+    keyConcepts: [
+      'Programmable Money & Smart Contracts',
+      'Two-Tier Monetary Architecture',
+      'Financial Inclusivity vs Financial Surveillance',
+      'Disintermediation of Commercial Banks'
+    ],
+    suggestedResearchQuestions: [
+      'How do CBDCs differ fundamentally from decentralized cryptocurrencies like Bitcoin?',
+      'What safeguards are needed to prevent unauthorized transaction tracking?',
+      'How might CBDCs impact the velocity of money during economic crises?'
+    ],
+    usefulKeywords: ['CBDC', 'Central Bank', 'Programmable fiat', 'Disintermediation', 'Financial anonymity', 'Settlement friction'],
+    isAiGenerated: false,
+    createdAt: '2025-01-24T10:00:00.000Z',
+  },
+  {
+    id: 'topic-6',
+    title: 'The Neuroscience of Attention: Navigating Deep Work in a Distraction Economy',
+    category: 'Science',
+    mode: 'presentation',
+    difficulty: 'Beginner',
+    explanation: 'Modern digital platforms rely on dopamine feedback loops engineered to capture human attention. Understanding the prefrontal cortex, attentional switching costs, and focus restoration is crucial for knowledge workers seeking deep focus.',
+    keyConcepts: [
+      'Prefrontal Cortex & Executive Function',
+      'Attentional Residue & Context Switching',
+      'Dopamine Pathways & Algorithmic Hooking',
+      'Restorative Environments & Focus Blocks'
+    ],
+    suggestedResearchQuestions: [
+      'What is attentional residue and how does rapid tab-switching degrade cognitive synthesis?',
+      'How do notification mechanics exploit biological reward signals?',
+      'What daily rituals provably restore prefrontal fatigue?'
+    ],
+    usefulKeywords: ['Attention residue', 'Deep work', 'Dopamine loop', 'Prefrontal fatigue', 'Context switching', 'Cognitive load'],
+    isAiGenerated: false,
+    createdAt: '2025-01-25T15:30:00.000Z',
+  },
+  {
+    id: 'topic-7',
+    title: 'Quantum Computing: Preparing for Post-RSA Cybersecurity and Cryptographic Shifts',
+    category: 'Technology',
+    mode: 'presentation',
+    difficulty: 'Advanced',
+    explanation: 'Shor’s algorithm running on a sufficiently large fault-tolerant quantum computer will render public-key encryption (RSA, ECC) vulnerable. Post-quantum cryptography (PQC) standards are now critical for global data infrastructure.',
+    keyConcepts: [
+      'Superposition & Quantum Qubits',
+      'Shor’s Algorithm & RSA Prime Factorization',
+      'Post-Quantum Lattice-Based Cryptography',
+      'Harvest Now, Decrypt Later Threat Vectors'
+    ],
+    suggestedResearchQuestions: [
+      'Why are traditional encryption algorithms vulnerable to quantum factorization?',
+      'What is the "Harvest Now, Decrypt Later" strategy employed by threat actors?',
+      'How do lattice-based mathematical problems resist quantum speedup?'
+    ],
+    usefulKeywords: ['Quantum superposition', 'Qubit', 'Post-quantum cryptography', 'Shor algorithm', 'RSA encryption', 'Lattice math'],
+    isAiGenerated: false,
+    createdAt: '2025-01-26T12:00:00.000Z',
+  },
+  {
+    id: 'topic-8',
+    title: 'Behavioral Interview Pitch: Explaining a Technical Conflict and Resolution',
+    category: 'Interview',
+    mode: 'interview',
+    difficulty: 'Intermediate',
+    explanation: 'Engineering interviewers assess interpersonal communication, empathy, and problem solving by asking how you handled a disagreement over architecture, code quality, or timeline pressures with team members.',
+    keyConcepts: [
+      'STAR Method (Situation, Task, Action, Result)',
+      'Data-Driven Technical Consensus',
+      'Empathy & Active Listening in Code Reviews',
+      'Focusing on Shared Engineering Outcomes'
+    ],
+    suggestedResearchQuestions: [
+      'How do you separate technical opinions from personal identity during architectural debates?',
+      'What metrics or benchmarks did you present to convince skeptical teammates?',
+      'How do you communicate trade-offs clearly to non-technical stakeholders?'
+    ],
+    usefulKeywords: ['STAR method', 'Technical consensus', 'Active listening', 'Trade-off evaluation', 'Conflict resolution'],
+    isAiGenerated: false,
+    createdAt: '2025-01-27T16:00:00.000Z',
+  },
+  {
+    id: 'topic-9',
+    title: 'Space Exploration vs Earth Priorities: Allocating R&D Capital for Humanity',
+    category: 'Society',
+    mode: 'debate',
+    difficulty: 'Intermediate',
+    explanation: 'Multi-billion dollar space missions inspire scientific breakthroughs and planetary defense, yet critics argue these funds should be directed toward pressing terrestrial challenges like climate change, poverty, and healthcare access.',
+    keyConcepts: [
+      'Spin-off Technologies (GPS, Materials, Solar)',
+      'Planetary Defense & Existential Risk Hedging',
+      'Opportunity Cost of Scientific R&D Capital',
+      'Commercial Space Colonization vs Earth Preservation'
+    ],
+    suggestedResearchQuestions: [
+      'How have historical space investments yielded everyday commercial technologies on Earth?',
+      'What is the opportunity cost of space exploration funding compared to global climate R&D?',
+      'Is multi-planetary civilization a valid safeguard against existential risks?'
+    ],
+    usefulKeywords: ['Spin-off tech', 'R&D capital', 'Existential risk', 'Planetary defense', 'Opportunity cost', 'Multi-planetary'],
+    isAiGenerated: false,
+    createdAt: '2025-01-28T09:00:00.000Z',
+  },
+  {
+    id: 'topic-10',
+    title: 'Autonomous Weapons Systems: Ethical Boundaries in Modern Warfare',
+    category: 'Philosophy',
+    mode: 'debate',
+    difficulty: 'Advanced',
+    explanation: 'Lethal Autonomous Weapons Systems (LAWS) can target and engage without human intervention. This raises fundamental questions about moral accountability, combatant distinction, algorithmic bias, and Geneva Convention compliance.',
+    keyConcepts: [
+      'Human-in-the-Loop vs Human-on-the-Loop',
+      'Moral Agency and Accountability Gap',
+      'Principle of Distinction & Proportionality',
+      'Algorithmic Target Recognition Failures'
+    ],
+    suggestedResearchQuestions: [
+      'Can an algorithm satisfy the Geneva Convention requirement for human military discretion?',
+      'Who bears legal liability when an autonomous target recognition system misidentifies non-combatants?',
+      'How can international treaties enforce bans on autonomous weapons?'
+    ],
+    usefulKeywords: ['LAWS', 'Human-in-the-loop', 'Moral agency', 'Target recognition', 'Geneva Convention', 'Proportionality'],
+    isAiGenerated: false,
+    createdAt: '2025-01-29T14:20:00.000Z',
+  },
+  {
+    id: 'topic-11',
+    title: 'Storytelling in Business: How Narrative Arc Drives Product Adoption',
+    category: 'Business',
+    mode: 'casual',
+    difficulty: 'Beginner',
+    explanation: 'Features and specs inform, but stories persuade. Learn how constructing a clear narrative arc (Villain/Problem, Hero/User, Guide/Product, Resolution) turns complex technical features into intuitive customer value.',
+    keyConcepts: [
+      'The Hero’s Journey in Product Positioning',
+      'Empathy-Driven Problem Framing',
+      'Concrete Contrast: Status Quo vs Envisioned Future',
+      'Simplifying Technical Complexity for Customers'
+    ],
+    suggestedResearchQuestions: [
+      'Why do humans remember stories 22 times more effectively than standalone facts?',
+      'How can technical founders translate complex features into emotional benefits?',
+      'What makes a product narrative authentic rather than marketing fluff?'
+    ],
+    usefulKeywords: ['Narrative arc', 'Product positioning', 'Status quo', 'Empathy framing', 'Value proposition', 'Storytelling'],
+    isAiGenerated: false,
+    createdAt: '2025-01-30T11:45:00.000Z',
+  },
+  {
+    id: 'topic-12',
+    title: 'Impromptu Challenge: Why Failure is the Essential Fuel for Technical Mastery',
+    category: 'Random',
+    mode: 'impromptu',
+    difficulty: 'Beginner',
+    explanation: 'Deliver a spontaneous 2-minute speech on how encountering software bugs, failed experiments, or rejected proposals accelerates learning more effectively than immediate success.',
+    keyConcepts: [
+      'Growth Mindset & Neuroplasticity',
+      'Fail-Fast Engineering Culture',
+      'Post-Mortems and Blameless Root Cause Analysis',
+      'Resilience in Problem Solving'
+    ],
+    suggestedResearchQuestions: [
+      'What is the psychological difference between a fixed mindset and a growth mindset?',
+      'How do blameless post-mortems foster innovation in tech companies?',
+      'Why does debugging difficult edge cases build deeper comprehension than writing boilerplate?'
+    ],
+    usefulKeywords: ['Growth mindset', 'Post-mortem', 'Blameless culture', 'Resilience', 'Neuroplasticity', 'Root cause'],
+    isAiGenerated: false,
+    createdAt: '2025-01-31T08:30:00.000Z',
   }
 ];
 

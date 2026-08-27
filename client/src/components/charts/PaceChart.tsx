@@ -18,22 +18,24 @@ interface PaceChartProps {
 
 export const PaceChart: React.FC<PaceChartProps> = ({ data, averageWpm }) => {
   return (
-    <div className="w-full h-64 font-sans">
+    <div className="w-full h-64 font-sans p-3 bg-white border-2 border-black rounded-xl shadow-neo-sm">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+        <LineChart data={data} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
           {/* Target Ideal Conversational Band: 130 - 160 WPM */}
-          <ReferenceArea y1={130} y2={160} fill="#10b981" fillOpacity={0.08} />
+          <ReferenceArea y1={130} y2={160} fill="#FFE600" fillOpacity={0.3} stroke="#000000" strokeWidth={1} strokeDasharray="2 2" />
           <XAxis
             dataKey="timeSec"
-            stroke="#71717a"
+            stroke="#000000"
             fontSize={11}
+            tickLine={false}
             tickFormatter={(val) => `${val}s`}
           />
           <YAxis
             domain={[90, 200]}
-            stroke="#71717a"
+            stroke="#000000"
             fontSize={11}
+            tickLine={false}
             tickFormatter={(val) => `${val}wpm`}
           />
           <Tooltip
@@ -41,12 +43,11 @@ export const PaceChart: React.FC<PaceChartProps> = ({ data, averageWpm }) => {
               if (active && payload && payload.length) {
                 const wpm = payload[0].value as number;
                 const status = wpm > 160 ? 'Rushed' : wpm < 130 ? 'Slow' : 'Ideal';
-                const statusColor = wpm > 160 ? 'text-amber-400' : wpm < 130 ? 'text-blue-400' : 'text-emerald-400';
                 return (
-                  <div className="bg-zinc-900 border border-zinc-700 p-2.5 rounded-lg shadow-xl text-xs font-mono">
-                    <p className="text-zinc-400">Time: <span className="text-white font-semibold">{label}s</span></p>
-                    <p className="text-white">Pace: <span className="font-semibold text-emerald-400">{wpm} WPM</span></p>
-                    <p className={`text-[11px] ${statusColor}`}>Rating: {status}</p>
+                  <div className="bg-[#69D2E7] border-2 border-black p-2.5 rounded-lg shadow-neo-sm text-xs font-mono text-black font-bold">
+                    <p>Time: {label}s</p>
+                    <p>Pace: {wpm} WPM</p>
+                    <p>Rating: {status}</p>
                   </div>
                 );
               }
@@ -55,25 +56,28 @@ export const PaceChart: React.FC<PaceChartProps> = ({ data, averageWpm }) => {
           />
           <ReferenceLine
             y={averageWpm}
-            stroke="#a855f7"
+            stroke="#FF6B6B"
             strokeDasharray="4 4"
+            strokeWidth={2}
             label={{
               value: `Avg: ${Math.round(averageWpm)} WPM`,
-              fill: '#a855f7',
-              fontSize: 10,
+              fill: '#000000',
+              fontSize: 11,
+              fontWeight: 'bold',
               position: 'right',
             }}
           />
           <Line
             type="monotone"
             dataKey="windowWpm"
-            stroke="#38bdf8"
-            strokeWidth={2.5}
-            dot={{ fill: '#38bdf8', r: 3 }}
-            activeDot={{ r: 5, fill: '#38bdf8', stroke: '#09090b', strokeWidth: 2 }}
+            stroke="#000000"
+            strokeWidth={3}
+            dot={{ fill: '#69D2E7', r: 5, stroke: '#000000', strokeWidth: 2 }}
+            activeDot={{ r: 7, fill: '#FFE600', stroke: '#000000', strokeWidth: 2 }}
           />
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
 };
+

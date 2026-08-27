@@ -13,7 +13,7 @@ export const WaveformCanvas: React.FC<WaveformCanvasProps> = ({
   isPaused = false,
   analyser = null,
   height = 140,
-  barColor = '#4ECCD3',
+  barColor = '#69D2E7',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameId = useRef<number | null>(null);
@@ -32,7 +32,7 @@ export const WaveformCanvas: React.FC<WaveformCanvasProps> = ({
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    const numBars = 40;
+    const numBars = 44;
     const bufferLength = analyser ? analyser.frequencyBinCount : numBars;
     const dataArray = new Uint8Array(bufferLength);
 
@@ -54,7 +54,7 @@ export const WaveformCanvas: React.FC<WaveformCanvasProps> = ({
           if (analyser) {
             const index = Math.floor((i / numBars) * (bufferLength / 2));
             const value = dataArray[index] || 0;
-            normalizedHeight = Math.max(0.1, value / 255);
+            normalizedHeight = Math.max(0.12, value / 255);
           } else {
             // Organic wave simulation fallback
             const wave1 = Math.sin(phaseRef.current + i * 0.25) * 0.35;
@@ -68,8 +68,9 @@ export const WaveformCanvas: React.FC<WaveformCanvasProps> = ({
         const x = i * (barWidth + totalSpacing) + 2;
         const y = centerY - barH / 2;
 
-        // Neo-Brutalism bars: Vibrant fill with crisp solid black border
-        const colors = ['#FFE600', '#FF6B6B', '#4ECCD3', '#A78BFA', '#51CF66'];
+        // User specified exact wave color: #69D2E7 (Bright sky cyan blue)
+        // Neo-Brutalism bars with solid black outline
+        const colors = ['#69D2E7', '#69D2E7', '#4ECCD3', '#69D2E7', '#FFE600'];
         const barFill = isRecording && !isPaused ? colors[i % colors.length] : barColor;
 
         ctx.fillStyle = barFill;
@@ -108,4 +109,5 @@ export const WaveformCanvas: React.FC<WaveformCanvasProps> = ({
     </div>
   );
 };
+
 

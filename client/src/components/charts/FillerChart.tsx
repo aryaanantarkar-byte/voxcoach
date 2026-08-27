@@ -15,37 +15,37 @@ interface FillerChartProps {
 }
 
 export const FillerChart: React.FC<FillerChartProps> = ({ breakdown }) => {
-  const colors = ['#f43f5e', '#fb7185', '#fda4af', '#fecdd3', '#ffe4e6'];
+  const colors = ['#FF6B6B', '#69D2E7', '#FFE600', '#A78BFA', '#51CF66'];
 
   return (
-    <div className="w-full h-64 font-sans">
+    <div className="w-full h-64 font-sans p-3 bg-white border-2 border-black rounded-xl shadow-neo-sm">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={breakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} layout="vertical">
-          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" horizontal={false} />
-          <XAxis type="number" stroke="#71717a" fontSize={11} allowDecimals={false} />
+        <BarChart data={breakdown} margin={{ top: 10, right: 15, left: -10, bottom: 0 }} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" horizontal={false} />
+          <XAxis type="number" stroke="#000000" fontSize={11} tickLine={false} allowDecimals={false} />
           <YAxis
             type="category"
             dataKey="word"
-            stroke="#a1a1aa"
+            stroke="#000000"
             fontSize={12}
             tickLine={false}
-            width={70}
+            width={80}
           />
           <Tooltip
             content={({ active, payload }) => {
               if (active && payload && payload.length) {
                 const item = payload[0].payload;
                 return (
-                  <div className="bg-zinc-900 border border-zinc-700 p-2.5 rounded-lg shadow-xl text-xs font-mono">
-                    <p className="text-zinc-400">Filler: <span className="text-rose-400 font-semibold">"{item.word}"</span></p>
-                    <p className="text-white">Count: <span className="font-semibold">{item.count} times</span></p>
+                  <div className="bg-[#FF6B6B] border-2 border-black p-2.5 rounded-lg shadow-neo-sm text-xs font-mono text-black font-bold">
+                    <p>Filler: "{item.word}"</p>
+                    <p>Count: {item.count} times</p>
                   </div>
                 );
               }
               return null;
             }}
           />
-          <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+          <Bar dataKey="count" radius={[0, 6, 6, 0]} stroke="#000000" strokeWidth={2}>
             {breakdown.map((_, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
@@ -55,3 +55,4 @@ export const FillerChart: React.FC<FillerChartProps> = ({ breakdown }) => {
     </div>
   );
 };
+
