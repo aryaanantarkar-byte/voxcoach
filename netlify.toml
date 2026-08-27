@@ -1,10 +1,10 @@
-# Netlify configuration for VoxCoach client
 [build]
-  base = "client"
-  publish = "dist"
-  command = "npm run build"
+  command = "npm install --prefix client && npm run build --prefix client"
+  publish = "client/dist"
 
-# SPA Fallback rule so React Router routes do not 404
+[build.environment]
+  NODE_VERSION = "22"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
