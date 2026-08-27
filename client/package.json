@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:server && npm run build:client",
+    "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
