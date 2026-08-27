@@ -1,0 +1,30 @@
+{
+  "name": "voxcoach",
+  "version": "1.0.0",
+  "description": "VOXCOACH — AI-Powered Public Speaking Coach (Learn. Speak. Improve.)",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm.cmd run dev --prefix server\" \"npm.cmd run dev --prefix client\"",
+    "dev:server": "npm.cmd run dev --prefix server",
+    "dev:client": "npm.cmd run dev --prefix client",
+    "build:server": "npm.cmd run build --prefix server",
+    "build:client": "npm.cmd run build --prefix client",
+    "build": "npm run build:server && npm run build:client",
+    "install:all": "npm.cmd install && npm.cmd install --prefix server && npm.cmd install --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "public-speaking",
+    "audio-analysis",
+    "ai-coach",
+    "speech-to-text",
+    "pitch-detection",
+    "gemini",
+    "react",
+    "express"
+  ],
+  "author": "VoxCoach Team",
+  "license": "MIT"
+}

@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+build/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary audio files and scratch uploads
+uploads/
+temp/
+*.webm
+*.wav
+*.mp3
+
+# TypeScript, test, and package-manager cache files
+*.tsbuildinfo
+coverage/
+.nyc_output/
+.npm/
+.cache/
+
+# Local embedded database. It is created automatically when the server starts.
+server/data_local/*.json
+!server/data_local/.gitkeep

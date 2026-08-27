@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fff7ec;
+  --foreground: #191717;
+  --muted: #f5eadc;
+  --muted-foreground: #665f5b;
+  --card: #ffffff;
+  --card-foreground: #191717;
+  --border: #191717;
+}
+
+.light {
+  --background: #ffffff;
+  --foreground: #09090b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --border: #e4e4e7;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: radial-gradient(#191717 0.7px, transparent 0.7px);
+  background-size: 18px 18px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.neo-app {
+  background-color: #fff7ec;
+  background-image: radial-gradient(#191717 0.65px, transparent 0.65px);
+  background-size: 18px 18px;
+}
+
+/* Dark theme: inky navy surfaces, slate borders, black depth, pastel accents. */
+.dark, .dark body { background-color: #080d17; color: #cbd5e1; }
+.dark .neo-app {
+  background-color: #080d17;
+  background-image: radial-gradient(#536176 0.6px, transparent 0.6px);
+}
+.dark main [class~="bg-[#121215]"], .dark main [class~="bg-zinc-950"], .dark main [class~="bg-zinc-950/60"], .dark main [class~="bg-zinc-950/80"], .dark main [class~="bg-zinc-950/90"], .dark main [class~="bg-zinc-900"], .dark main [class~="bg-zinc-900/60"] {
+  background-color: #111827 !important;
+  border-color: #526074 !important;
+  box-shadow: 5px 5px 0 #000000;
+}
+.dark main [class~="bg-gradient-to-br"], .dark main [class~="bg-gradient-to-r"] {
+  border-color: #526074 !important;
+  box-shadow: 5px 5px 0 #000000;
+}
+.dark main [class~="text-white"], .dark main [class~="text-zinc-100"], .dark main [class~="text-zinc-200"], .dark main [class~="text-zinc-300"] { color: #cbd5e1 !important; }
+.dark main [class~="text-zinc-400"], .dark main [class~="text-zinc-500"], .dark main [class~="text-zinc-600"] { color: #8d9aad !important; }
+.dark main [class~="border-zinc-800"], .dark main [class~="border-zinc-800/80"], .dark main [class~="border-zinc-800/50"], .dark main [class~="border-zinc-900"], .dark main [class~="border-[#27272a]"] { border-color: #526074 !important; }
+.dark main [class~="bg-emerald-500"], .dark main [class~="bg-emerald-500/10"], .dark main [class~="bg-emerald-950/40"], .dark main [class~="bg-emerald-950/50"] { background-color: #2baca5 !important; }
+.dark main [class~="text-emerald-400"] { color: #65d6cb !important; }
+.dark main input, .dark main textarea, .dark main select { background: #101725 !important; border-color: #526074 !important; color: #cbd5e1 !important; box-shadow: 3px 3px 0 #000000; }
+.dark main input::placeholder, .dark main textarea::placeholder { color: #718096 !important; }
+.dark main .group:hover, .dark main a:hover, .dark main button:hover { box-shadow: 7px 7px 0 #000000; }
+.dark main button:active, .dark main a:active { box-shadow: 2px 2px 0 #000000 !important; }
+.dark main table tr:hover { background: #1e293b !important; }
+.dark footer { background: #080d17 !important; border-color: #526074 !important; }
+.dark footer p:first-child { color: #cbd5e1 !important; }
+.dark footer p:last-child { color: #8d9aad !important; }
+
+/* Neo-brutalist visual language */
+::selection { background: #ffdc60; color: #191717; }
+
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+
+button, a[class], input, textarea, select {
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease !important;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid #4dc9c2;
+  outline-offset: 3px;
+}
+
+/* Convert the existing component library into a unified light, outlined system. */
+main [class~="bg-[#121215]"], main [class~="bg-zinc-950"], main [class~="bg-zinc-950/60"], main [class~="bg-zinc-950/80"], main [class~="bg-zinc-950/90"], main [class~="bg-zinc-900"], main [class~="bg-zinc-900/60"] {
+  background-color: #ffffff !important;
+  border-color: #191717 !important;
+  border-width: 2px !important;
+  box-shadow: 5px 5px 0 #191717;
+}
+
+main [class~="bg-gradient-to-br"], main [class~="bg-gradient-to-r"] {
+  border: 2px solid #191717 !important;
+  box-shadow: 5px 5px 0 #191717;
+}
+
+main [class~="text-white"], main [class~="text-zinc-100"], main [class~="text-zinc-200"], main [class~="text-zinc-300"] { color: #191717 !important; }
+main [class~="text-zinc-400"], main [class~="text-zinc-500"], main [class~="text-zinc-600"] { color: #665f5b !important; }
+main [class~="border-zinc-800"], main [class~="border-zinc-800/80"], main [class~="border-zinc-800/50"], main [class~="border-zinc-900"], main [class~="border-[#27272a]"] { border-color: #191717 !important; }
+main [class~="bg-emerald-500"], main [class~="bg-emerald-500/10"], main [class~="bg-emerald-950/40"], main [class~="bg-emerald-950/50"] { background-color: #66d9c9 !important; }
+main [class~="text-emerald-400"] { color: #147f76 !important; }
+
+main .group:hover, main a:hover, main button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 #191717;
+}
+
+main button:active, main a:active { transform: translate(3px, 3px) !important; box-shadow: 2px 2px 0 #191717 !important; }
+
+main input, main textarea, main select {
+  background: #fff !important;
+  border: 2px solid #191717 !important;
+  color: #191717 !important;
+  box-shadow: 3px 3px 0 #191717;
+}
+
+main input::placeholder, main textarea::placeholder { color: #8b817a !important; }
+main table tr:hover { background: #fff1b5 !important; }
+main [class~="bg-zinc-800"], main [class~="bg-zinc-800/50"] { background-color: #fff1b5 !important; }
+main [class~="bg-zinc-900"] { background-color: #ffffff !important; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff7b7b;
+  border: 2px solid #191717;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff5f5f;
+}
+
+/* Minimal subtle glass panel */
+.glass-panel {
+  background: #ffffff;
+  border: 2px solid #191717;
+  box-shadow: 5px 5px 0 #191717;
+}
