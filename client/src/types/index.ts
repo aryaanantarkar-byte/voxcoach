@@ -53,6 +53,55 @@ export interface IPauseEvent {
   type: 'deliberate' | 'hesitation';
 }
 
+export interface IPitchIssue {
+  id: string;
+  title: string;
+  timestampStartSec: number;
+  timestampEndSec: number;
+  formattedTimestamp: string;
+  whatHappened: string;
+  whyItMatters: string;
+  recommendation: string;
+  severity: 'low' | 'medium' | 'high';
+  hasProfessionalExample: boolean;
+  originalText?: string;
+  professionalExampleText?: string;
+  recommendedStyleDesc?: string;
+}
+
+export interface IProfessionalExample {
+  issueId: string;
+  originalText: string;
+  professionalText: string;
+  styleDescription: string;
+  targetMetrics: {
+    pitchHz: number;
+    wpm: number;
+    pauseRatio: number;
+  };
+}
+
+export interface IAnalysisCategoryResult {
+  id: string;
+  categoryKey: 'pitch' | 'pace' | 'pauses' | 'fillers' | 'energy' | 'fluency' | 'clarity' | 'vocabulary' | 'structure' | 'reasoning';
+  title: string;
+  score: number;
+  maxScore: number;
+  shortInterpretation: string;
+  keyFinding: string;
+  severity: 'excellent' | 'good' | 'warning' | 'critical';
+  formattedTimestamp?: string;
+  timestampSec?: number;
+  detailedAnalysis: {
+    problematicSection?: string;
+    whyItMatters: string;
+    howToImprove: string;
+    metricsSummary: string;
+  };
+  hasProfessionalExample: boolean;
+  professionalExample?: IProfessionalExample;
+}
+
 export interface ISpeechAcoustics {
   pitch: {
     averageHz: number;
@@ -61,6 +110,7 @@ export interface ISpeechAcoustics {
     standardDeviationHz: number;
     variationRating: 'monotone_flat' | 'natural_balanced' | 'dynamic_expressive' | 'erratic_spikes';
     timeSeries: IPitchPoint[];
+    issues: IPitchIssue[];
     coachingFeedback: string;
   };
   pace: {
@@ -87,6 +137,18 @@ export interface ISpeechAcoustics {
     ratePerMinute: number;
     mostFrequent: string;
     breakdown: Array<{ word: string; count: number }>;
+    coachingFeedback: string;
+  };
+  energy: {
+    averageDb: number;
+    dynamicRangeDb: number;
+    projectionRating: 'soft_spoken' | 'confident_projected' | 'strained_loud';
+    coachingFeedback: string;
+  };
+  fluency: {
+    smoothnessScore: number;
+    falseStartsCount: number;
+    articulationIndex: number;
     coachingFeedback: string;
   };
 }
@@ -135,12 +197,15 @@ export interface ICoachingScores {
     speakingPace: number;
     pauses: number;
     fillerWords: number;
+    energy: number;
+    fluency: number;
     clarity: number;
-    structure: number;
     vocabulary: number;
+    structure: number;
     contentReasoning: number;
   };
 }
+
 
 export interface ISpeechSession {
   id: string;

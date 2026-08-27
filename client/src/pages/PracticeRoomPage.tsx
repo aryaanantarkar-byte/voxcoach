@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { WaveformCanvas } from '../components/audio/WaveformCanvas';
+import { analyzeRecordedAudio } from '../services/audioAnalysisService';
 import {
   Mic,
   MicOff,
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export const PracticeRoomPage: React.FC = () => {
-  const { currentTopic, prepNotes, setRecordedAudioBlob, setRecordedAudioUrl } = useSession();
+  const { currentTopic, prepNotes, currentSession, setCurrentSession, setRecordedAudioBlob, setRecordedAudioUrl } = useSession();
   const navigate = useNavigate();
 
   const {
@@ -61,6 +62,31 @@ export const PracticeRoomPage: React.FC = () => {
     if (blob) {
       setRecordedAudioBlob(blob);
       setRecordedAudioUrl(URL.createObjectURL(blob));
+      try {
+        const measured = await analyzeRecordedAudio(blob);
+        if (currentSession) {
+          const pitchScore = measured.pitch.standardDeviationHz === 0
+            ? 0
+            : Math.max(0, Math.min(100, Math.round(100 - Math.abs(measured.pitch.standardDeviationHz - 28) * 1.4)));
+          setCurrentSession({
+            ...currentSession,
+            speakingDurationSeconds: Math.round(measured.durationSec),
+            acoustics: {
+              ...currentSession.acoustics,
+              pitch: measured.pitch,
+              pauses: measured.pauses,
+              energy: measured.energy,
+            },
+            scores: {
+              ...currentSession.scores,
+              breakdown: { ...currentSession.scores.breakdown, pitchVariation: pitchScore },
+            },
+          });
+        }
+      } catch (analysisError) {
+        // Keep the recording available even when this browser cannot decode it.
+        console.warn('Local audio analysis unavailable:', analysisError);
+      }
     }
 
     setTimeout(() => {
@@ -258,4 +284,3 @@ export const PracticeRoomPage: React.FC = () => {
     </div>
   );
 };
-

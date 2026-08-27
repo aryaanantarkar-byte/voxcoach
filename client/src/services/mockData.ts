@@ -352,7 +352,39 @@ Conclusion:
         { timeSec: 150, pitchHz: 138 },
         { timeSec: 165, pitchHz: 125 }
       ],
-      coachingFeedback: "Your pitch inflection was natural and steady throughout your introductory and concluding statements. You showed healthy dynamics (σ = 28.4 Hz). To increase persuasive impact, try dropping your pitch slightly on key declarative claims like 'the transition speed is unprecedented'."
+      coachingFeedback: "Your pitch inflection was natural and steady throughout your introductory and concluding statements. You showed healthy dynamics (σ = 28.4 Hz). To increase persuasive impact, try dropping your pitch slightly on key declarative claims like 'the transition speed is unprecedented'.",
+      issues: [
+        {
+          id: 'issue-pitch-1',
+          title: 'Uneven Pitch & High Terminal Inflection',
+          timestampStartSec: 42,
+          timestampEndSec: 48,
+          formattedTimestamp: '00:42 – 00:48',
+          whatHappened: 'Your pitch rises sharply near the end of several sentences, creating an uncertain or hesitant impression during core reasoning.',
+          whyItMatters: 'Rising terminal inflection (uptalk) on factual claims diminishes perceived authority and executive confidence.',
+          recommendation: 'Maintain a slightly lower and more stable baseline pitch while allowing controlled downward variation on key claim words.',
+          severity: 'high',
+          hasProfessionalExample: true,
+          originalText: 'AI can basically scan thousands of documents in seconds.',
+          professionalExampleText: 'AI scans thousands of legal and financial documents in seconds.',
+          recommendedStyleDesc: 'A confident, natural delivery with controlled pitch, downward sentence resolution, and emphasis on "scans" and "documents".'
+        },
+        {
+          id: 'issue-pitch-2',
+          title: 'Monotone Delivery Segment',
+          timestampStartSec: 60,
+          timestampEndSec: 68,
+          formattedTimestamp: '01:00 – 01:08',
+          whatHappened: 'Vocal pitch variation flattened to ±4 Hz while delivering your core economic argument.',
+          whyItMatters: 'Monotone delivery makes important transition logic sound passive, risking audience distraction.',
+          recommendation: 'Incorporate deliberate vocal pitch modulation on key action verbs like "invest" and "reskilling".',
+          severity: 'medium',
+          hasProfessionalExample: true,
+          originalText: 'If we don\'t actively invest in reskilling and institutional support, we risk significant labor friction.',
+          professionalExampleText: 'Without active investment in reskilling and support, we face significant labor friction.',
+          recommendedStyleDesc: 'Expressive inflection with dynamic contrast and deliberate focus on "investment" and "labor friction".'
+        }
+      ]
     },
     pace: {
       averageWpm: 139.2,
@@ -407,46 +439,54 @@ Conclusion:
         { word: 'basically', count: 1 },
         { word: 'like', count: 1 }
       ],
-      coachingFeedback: "Low filler frequency (1.8 fillers/min). Your most frequent filler was 'um'. Replacing 'basically' and 'you know' with silent pauses will immediately elevate your executive presence."
+      coachingFeedback: "Filler word rate is low at 1.8 per minute. Focus on replacing spontaneous crutch words like 'basically' with a clean silent breath."
+    },
+    energy: {
+      averageDb: -18.4,
+      dynamicRangeDb: 12.2,
+      projectionRating: 'confident_projected',
+      coachingFeedback: "Strong vocal projection with steady dynamic energy (-18.4 dB average). Voice level carries authority without sounding strained."
+    },
+    fluency: {
+      smoothnessScore: 88,
+      falseStartsCount: 1,
+      articulationIndex: 92,
+      coachingFeedback: "Excellent speech continuity and crisp articulation on complex multi-syllabic terms like 'technological' and 'unprecedented'."
     }
   },
   contentAnalysis: {
     structure: {
-      score: 84,
+      score: 89,
       hasClearIntroduction: true,
       hasStructuredBody: true,
       hasConclusion: true,
-      feedback: "Strong three-act structure: compelling historical analogy in the hook, clear contrast between task automation and job automation, and a definitive concluding principle."
+      feedback: "Strong three-act framework: clear thesis hook, well-partitioned body arguments, and an action-oriented synthesis conclusion."
     },
     clarity: {
       score: 86,
       readabilityIndex: "College Graduate (Flesch-Kincaid: 12.4)",
-      feedback: "Arguments were delivered with clarity and logical transitions. The distinction between physical and cognitive automation anchored the listener effectively."
+      feedback: "High conceptual precision. Terminology is well-framed for professional and academic audiences."
     },
     vocabulary: {
-      score: 79,
+      score: 82,
       typeTokenRatio: 0.68,
-      advancedTermsUsed: ['Cognitive labor', 'Unprecedented', 'Augmentation', 'Friction', 'Distinction'],
-      repetitiveWords: ['automation (4x)', 'replace (3x)'],
-      feedback: "Good domain terminology. Try substituting repetitive uses of 'automation' with synonyms such as 'mechanization', 'algorithmic processing', or 'digital workflows'."
+      advancedTermsUsed: ['cognitive labor', 'reskilling', 'augmentation', 'unprecedented', 'friction'],
+      repetitiveWords: ['automation', 'system'],
+      feedback: "Rich domain vocabulary. Expand synonyms for 'automation' to avoid minor term repetition."
     },
     relevanceAndReasoning: {
-      score: 83,
-      onTopicAssessment: "Directly addressed the prompt with balanced arguments.",
-      keyArgumentsIdentified: [
-        'Historical precedent of muscle automation vs cognitive automation',
-        'Task augmentation vs full job elimination',
-        'Necessity of reskilling and social support policies'
-      ],
-      evidenceAndExamplesProvided: ['Legal document scanning', 'Financial modeling'],
+      score: 85,
+      onTopicAssessment: "Directly addressed the prompt with analytical depth.",
+      keyArgumentsIdentified: ['Task vs Job Automation', 'Productivity Paradox', 'Labor Friction & Reskilling'],
+      evidenceAndExamplesProvided: ['Legal contract review', 'Financial data modeling'],
       counterargumentsConsidered: true,
-      reasoningDepthFeedback: "Sound deductive reasoning. To strengthen debate rigor, quantify the economic productivity gains or cite specific workforce retraining frameworks."
+      reasoningDepthFeedback: "Compelling logical flow connecting economic history with forward-looking workforce policy."
     }
   },
   knowledgeExploration: {
     unexploredSubtopics: [
       {
-        title: "The Productivity Paradox & Wage Disparity",
+        title: "Productivity vs Wage Growth",
         overview: "While AI boosts overall gross productivity, the economic surplus can concentrate heavily in capital rather than labor without wage-growth linkages."
       },
       {
@@ -469,6 +509,8 @@ Conclusion:
       speakingPace: 88,
       pauses: 82,
       fillerWords: 84,
+      energy: 80,
+      fluency: 88,
       clarity: 86,
       structure: 84,
       vocabulary: 79,

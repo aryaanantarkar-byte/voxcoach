@@ -77,59 +77,47 @@ body {
 /* Neo-brutalist visual language */
 ::selection { background: #ffdc60; color: #191717; }
 
-button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+/* Global button state fixes - ensure buttons maintain intended colors and never turn black on focus/hover/click */
+button, a, input, textarea, select {
+  -webkit-tap-highlight-color: transparent;
+}
 
 button, a[class], input, textarea, select {
   transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease !important;
 }
 
+/* Accessible focus ring that respects color identity without black flash */
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 3px solid #4dc9c2;
-  outline-offset: 3px;
+  outline: 3px solid #69D2E7 !important;
+  outline-offset: 3px !important;
 }
 
-/* Convert the existing component library into a unified light, outlined system. */
-main [class~="bg-[#121215]"], main [class~="bg-zinc-950"], main [class~="bg-zinc-950/60"], main [class~="bg-zinc-950/80"], main [class~="bg-zinc-950/90"], main [class~="bg-zinc-900"], main [class~="bg-zinc-900/60"] {
-  background-color: #ffffff !important;
-  border-color: #191717 !important;
-  border-width: 2px !important;
-  box-shadow: 5px 5px 0 #191717;
+/* Prevent unwanted dark/black backgrounds on active or focus */
+button:focus, button:active, button:hover,
+a:focus, a:active, a:hover {
+  filter: none;
 }
 
-main [class~="bg-gradient-to-br"], main [class~="bg-gradient-to-r"] {
-  border: 2px solid #191717 !important;
-  box-shadow: 5px 5px 0 #191717;
-}
-
-main [class~="text-white"], main [class~="text-zinc-100"], main [class~="text-zinc-200"], main [class~="text-zinc-300"] { color: #191717 !important; }
-main [class~="text-zinc-400"], main [class~="text-zinc-500"], main [class~="text-zinc-600"] { color: #665f5b !important; }
-main [class~="border-zinc-800"], main [class~="border-zinc-800/80"], main [class~="border-zinc-800/50"], main [class~="border-zinc-900"], main [class~="border-[#27272a]"] { border-color: #191717 !important; }
-main [class~="bg-emerald-500"], main [class~="bg-emerald-500/10"], main [class~="bg-emerald-950/40"], main [class~="bg-emerald-950/50"] { background-color: #66d9c9 !important; }
-main [class~="text-emerald-400"] { color: #147f76 !important; }
-
+/* Neo-brutalist button hover and click depth behavior */
 main .group:hover, main a:hover, main button:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 #191717;
+  box-shadow: 6px 6px 0 #000000 !important;
 }
 
-main button:active, main a:active { transform: translate(3px, 3px) !important; box-shadow: 2px 2px 0 #191717 !important; }
-
-main input, main textarea, main select {
-  background: #fff !important;
-  border: 2px solid #191717 !important;
-  color: #191717 !important;
-  box-shadow: 3px 3px 0 #191717;
+main button:active, main a:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 #000000 !important;
 }
 
-main input::placeholder, main textarea::placeholder { color: #8b817a !important; }
-main table tr:hover { background: #fff1b5 !important; }
-main [class~="bg-zinc-800"], main [class~="bg-zinc-800/50"] { background-color: #fff1b5 !important; }
-main [class~="bg-zinc-900"] { background-color: #ffffff !important; }
+/* Ensure button text and background stay crisp */
+button:not([class*="bg-"]), a:not([class*="bg-"]) {
+  background-color: transparent;
+}
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -137,18 +125,19 @@ main [class~="bg-zinc-900"] { background-color: #ffffff !important; }
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ff7b7b;
-  border: 2px solid #191717;
+  background: #69D2E7;
+  border: 2px solid #000000;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff5f5f;
+  background: #4ECCD3;
 }
 
 /* Minimal subtle glass panel */
 .glass-panel {
   background: #ffffff;
-  border: 2px solid #191717;
-  box-shadow: 5px 5px 0 #191717;
+  border: 2px solid #000000;
+  box-shadow: 5px 5px 0 #000000;
 }
+

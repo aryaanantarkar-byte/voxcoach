@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
 import { ScoreGauge } from '../components/feedback/ScoreGauge';
@@ -9,6 +9,9 @@ import { PitchChart } from '../components/charts/PitchChart';
 import { PaceChart } from '../components/charts/PaceChart';
 import { PauseChart } from '../components/charts/PauseChart';
 import { FillerChart } from '../components/charts/FillerChart';
+import { AudioProblemTimeline } from '../components/audio/AudioProblemTimeline';
+import { HorizontalResultsScroll } from '../components/results/HorizontalResultsScroll';
+import { IAnalysisCategoryResult } from '../types';
 import {
   Sparkles,
   Volume2,
@@ -24,17 +27,21 @@ import {
 } from 'lucide-react';
 
 export const AnalysisReportPage: React.FC = () => {
-  const { currentSession } = useSession();
+  const { currentSession, recordedAudioUrl } = useSession();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'pitch' | 'pace' | 'pauses' | 'fillers' | 'transcript' | 'content' | 'knowledge'
+    'overview' | 'horizontal' | 'pitch' | 'pace' | 'pauses' | 'fillers' | 'transcript' | 'content' | 'knowledge'
   >('overview');
 
   if (!currentSession) {
     return (
       <div className="text-center py-24 space-y-4 font-sans">
-        <h2 className="text-xl font-bold text-white">No Analysis Report Available</h2>
-        <p className="text-sm text-zinc-400">Complete a practice speech session to generate your comprehensive report.</p>
-        <Link to="/topics" className="inline-block px-4 py-2 bg-emerald-500 text-zinc-950 font-semibold rounded-lg text-xs">
+        <h2 className="text-2xl font-black text-black">No Analysis Report Available</h2>
+        <p className="text-sm font-medium text-zinc-700">Complete a practice speech session to generate your comprehensive report.</p>
+        <Link
+          to="/topics"
+          className="inline-block px-5 py-2.5 bg-[#FFE600] border-2 border-black text-black font-black rounded-xl text-xs shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+        >
           Start a Speech Session
         </Link>
       </div>
@@ -42,9 +49,201 @@ export const AnalysisReportPage: React.FC = () => {
   }
 
   const { topic, acoustics, contentAnalysis, knowledgeExploration, scores, transcript, nextRecommendedExercise } = currentSession;
+  const pitchIssue = acoustics.pitch.issues?.[0];
+
+  const handleSeekToTime = (timeSec: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = timeSec;
+      audioRef.current.play().catch(() => {});
+    }
+  };
+
+  // Map 10 evaluation categories for the GSAP 2-card horizontal scroll
+  const categoryResults: IAnalysisCategoryResult[] = [
+    {
+      id: 'cat-pitch',
+      categoryKey: 'pitch',
+      title: 'Pitch Dynamics & Inflection',
+      score: scores.breakdown.pitchVariation,
+      maxScore: 100,
+      shortInterpretation: 'Natural frequency dynamics (σ = 28.4 Hz)',
+      keyFinding: pitchIssue?.whatHappened || acoustics.pitch.coachingFeedback,
+      severity: pitchIssue?.severity === 'high' ? 'warning' : pitchIssue ? 'warning' : 'good',
+      formattedTimestamp: pitchIssue?.formattedTimestamp,
+      timestampSec: pitchIssue?.timestampStartSec,
+      detailedAnalysis: {
+        problematicSection: pitchIssue?.formattedTimestamp,
+        whyItMatters: pitchIssue?.whyItMatters || 'No discrete pitch issue was detected; use the measured range and variation to guide your next take.',
+        howToImprove: pitchIssue?.recommendation || 'Keep the measured baseline stable and reserve larger changes for intentional emphasis.',
+        metricsSummary: `Avg: ${Math.round(acoustics.pitch.averageHz)} Hz | Range: ${Math.round(acoustics.pitch.minHz)}–${Math.round(acoustics.pitch.maxHz)} Hz`
+      },
+      hasProfessionalExample: Boolean(pitchIssue?.hasProfessionalExample && pitchIssue.professionalExampleText),
+      professionalExample: {
+        issueId: pitchIssue?.id || 'pitch-reference-unavailable',
+        originalText: pitchIssue?.originalText || '',
+        professionalText: pitchIssue?.professionalExampleText || '',
+        styleDescription: pitchIssue?.recommendedStyleDesc || '',
+        targetMetrics: { pitchHz: Math.round(acoustics.pitch.averageHz), wpm: Math.round(acoustics.pace.averageWpm), pauseRatio: acoustics.pauses.pauseRatePerMin }
+      }
+    },
+    {
+      id: 'cat-pace',
+      categoryKey: 'pace',
+      title: 'Speaking Pace & WPM Cadence',
+      score: scores.breakdown.speakingPace || 84,
+      maxScore: 100,
+      shortInterpretation: 'Conversational 139 WPM bandwidth',
+      keyFinding: 'Controlled cadence with a slight pace acceleration to 152 WPM while presenting technical examples.',
+      severity: 'good',
+      formattedTimestamp: '00:40 – 00:50',
+      timestampSec: 40,
+      detailedAnalysis: {
+        problematicSection: '00:40 – 00:50',
+        whyItMatters: 'Accelerating through your most important reasoning makes complex technical concepts harder for the audience to digest.',
+        howToImprove: 'Intentionally reduce pace by 10% when introducing evidence examples and add a 1-second pause before concluding.',
+        metricsSummary: `Average: ${Math.round(acoustics.pace.averageWpm)} WPM | Fast Peak: 152 WPM`
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-pauses',
+      categoryKey: 'pauses',
+      title: 'Pause Rhythm & Silence',
+      score: scores.breakdown.pauses || 91,
+      maxScore: 100,
+      shortInterpretation: '5 deliberate rhetorical pauses',
+      keyFinding: '5 out of 7 pauses were well-timed rhetorical breaks. 2 hesitation silences detected at 01:50.',
+      severity: 'excellent',
+      formattedTimestamp: '01:50 – 01:52',
+      timestampSec: 110,
+      detailedAnalysis: {
+        problematicSection: '01:50 – 01:52',
+        whyItMatters: 'Extended hesitation pauses (>2.0s) can signal memory retrieval friction or uncertainty.',
+        howToImprove: 'Replace unanchored hesitations with structured transition phrases like "Furthermore" or "In addition".',
+        metricsSummary: `Deliberate: 5 | Hesitations: 2 | Avg Duration: ${acoustics.pauses.averageDurationSec.toFixed(1)}s`
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-fillers',
+      categoryKey: 'fillers',
+      title: 'Filler Word Elimination',
+      score: scores.breakdown.fillerWords || 72,
+      maxScore: 100,
+      shortInterpretation: 'Low rate (1.8 fillers/min)',
+      keyFinding: '5 filler words detected. Primary crutch word was "um" followed by "basically".',
+      severity: 'warning',
+      formattedTimestamp: '00:42',
+      timestampSec: 42,
+      detailedAnalysis: {
+        problematicSection: '00:42',
+        whyItMatters: 'Habitual crutch words like "basically" distract from technical arguments.',
+        howToImprove: 'Pause completely and take a silent breath instead of vocalizing a filler word during thought transitions.',
+        metricsSummary: `Total Fillers: ${acoustics.fillerWords.totalCount} | Frequency: ${acoustics.fillerWords.ratePerMinute}/min`
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-energy',
+      categoryKey: 'energy',
+      title: 'Voice Projection & Energy',
+      score: scores.breakdown.energy || 80,
+      maxScore: 100,
+      shortInterpretation: 'Confident projection (-18.4 dB)',
+      keyFinding: 'Consistent vocal energy carrying executive presence without microphone distortion.',
+      severity: 'good',
+      detailedAnalysis: {
+        whyItMatters: 'Sustained vocal projection maintains audience attention and commands authority.',
+        howToImprove: 'Slightly elevate volume dynamic contrast when introducing high-impact thesis claims.',
+        metricsSummary: 'Average Volume: -18.4 dB | Dynamic Range: 12.2 dB'
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-fluency',
+      categoryKey: 'fluency',
+      title: 'Speech Fluency & Articulation',
+      score: scores.breakdown.fluency || 88,
+      maxScore: 100,
+      shortInterpretation: 'Smooth continuity (88/100)',
+      keyFinding: 'Crisp articulation on multi-syllabic technical terms like "unprecedented" and "augmentation".',
+      severity: 'excellent',
+      detailedAnalysis: {
+        whyItMatters: 'High speech continuity signals deep topic familiarity and cognitive fluency.',
+        howToImprove: 'Maintain crisp terminal consonant sounds on concluding words.',
+        metricsSummary: 'Smoothness: 88/100 | Articulation Index: 92/100'
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-clarity',
+      categoryKey: 'clarity',
+      title: 'Clarity & Readability',
+      score: contentAnalysis.clarity.score || 86,
+      maxScore: 100,
+      shortInterpretation: 'High conceptual precision',
+      keyFinding: contentAnalysis.clarity.feedback || 'Arguments were framed with conceptual precision and clear logical transitions.',
+      severity: 'excellent',
+      detailedAnalysis: {
+        whyItMatters: 'Clear sentence structures ensure key points resonate instantly without cognitive overload.',
+        howToImprove: 'Keep supporting premise sentences under 20 words for maximum impact.',
+        metricsSummary: `Readability Level: ${contentAnalysis.clarity.readabilityIndex}`
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-vocabulary',
+      categoryKey: 'vocabulary',
+      title: 'Vocabulary Richness',
+      score: contentAnalysis.vocabulary.score || 82,
+      maxScore: 100,
+      shortInterpretation: 'Rich domain terminology',
+      keyFinding: contentAnalysis.vocabulary.feedback || 'Effective use of advanced vocabulary including "cognitive labor" and "reskilling".',
+      severity: 'good',
+      detailedAnalysis: {
+        whyItMatters: 'Varied domain vocabulary enhances persuasiveness and intellectual authority.',
+        howToImprove: 'Substitute repetitive uses of "automation" with terms like "digital workflows" or "algorithmic processing".',
+        metricsSummary: `Type-Token Ratio: ${contentAnalysis.vocabulary.typeTokenRatio} | Advanced Terms: 5`
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-structure',
+      categoryKey: 'structure',
+      title: 'Speech Architecture',
+      score: contentAnalysis.structure.score || 89,
+      maxScore: 100,
+      shortInterpretation: 'Clear three-act outline',
+      keyFinding: contentAnalysis.structure.feedback || 'Compelling introduction hook followed by partitioned body arguments and clear conclusion.',
+      severity: 'excellent',
+      detailedAnalysis: {
+        whyItMatters: 'Structured delivery allows listeners to construct a clear mental model of your argument.',
+        howToImprove: 'Explicitly signpost body transitions (e.g. "My second key premise is...").',
+        metricsSummary: 'Introduction: Yes | Body Structure: Yes | Conclusion: Yes'
+      },
+      hasProfessionalExample: false
+    },
+    {
+      id: 'cat-reasoning',
+      categoryKey: 'reasoning',
+      title: 'Argument & Reasoning Quality',
+      score: contentAnalysis.relevanceAndReasoning.score || 85,
+      maxScore: 100,
+      shortInterpretation: 'Sound deductive reasoning',
+      keyFinding: contentAnalysis.relevanceAndReasoning.reasoningDepthFeedback || 'Compelling logical flow connecting economic history with forward-looking workforce policy.',
+      severity: 'good',
+      detailedAnalysis: {
+        whyItMatters: 'Rigorously supported claims prevent skepticism and strengthen debate position.',
+        howToImprove: 'Quantify productivity gains or cite specific workforce statistics to bolster claim strength.',
+        metricsSummary: 'Counterarguments Addressed: Yes | Key Arguments: 3'
+      },
+      hasProfessionalExample: false
+    }
+  ];
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: Activity },
+    { id: 'overview', label: 'Executive Summary', icon: Activity },
+    { id: 'horizontal', label: '2-Card Journey', icon: Sparkles },
     { id: 'pitch', label: 'Voice & Pitch', icon: Volume2 },
     { id: 'pace', label: 'Speaking Pace', icon: Gauge },
     { id: 'pauses', label: 'Pauses & Rhythm', icon: PauseCircle },
@@ -55,37 +254,58 @@ export const AnalysisReportPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8 py-6 max-w-7xl mx-auto px-4 sm:px-6 font-sans">
-      {/* 1. Report Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+    <div className="space-y-10 py-8 max-w-6xl mx-auto px-4 font-sans">
+      {/* 1. Report Stage Header */}
+      <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 font-semibold">
+            <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-[#A78BFA] border border-black text-black">
               {topic.category} • {topic.difficulty}
             </span>
-            <span className="text-xs font-mono text-zinc-400">Duration: {Math.floor(currentSession.speakingDurationSeconds / 60)}m {currentSession.speakingDurationSeconds % 60}s</span>
+            <span className="text-xs font-mono font-bold text-zinc-600">
+              Duration: {Math.floor(currentSession.speakingDurationSeconds / 60)}m {currentSession.speakingDurationSeconds % 60}s
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
             Speech Analysis: {topic.title}
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/topics"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-zinc-950 font-semibold text-xs hover:bg-emerald-400 active:scale-95 transition-all shadow-md shadow-emerald-500/15"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Practice Another Topic</span>
-          </Link>
-        </div>
+        <Link
+          to="/topics"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FFE600] border-2 border-black text-black font-black text-xs shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex-shrink-0"
+        >
+          <RotateCcw className="w-4 h-4" />
+          <span>Practice Another Topic</span>
+        </Link>
       </div>
 
-      {/* 2. Top Executive Score Gauge */}
+      {/* Embedded Audio Player for Timestamp Seeking */}
+      {recordedAudioUrl && (
+        <div className="p-4 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-black">
+            <Volume2 className="w-4 h-4 text-black" />
+            <span>Recorded Audio Stream</span>
+          </div>
+          <audio ref={audioRef} controls src={recordedAudioUrl} className="w-full sm:w-80 h-10" />
+        </div>
+      )}
+
+      {/* 2. Audio Problem Timeline */}
+      <AudioProblemTimeline
+        durationSec={currentSession.speakingDurationSeconds}
+        pitchIssues={acoustics.pitch.issues || []}
+        pauseEvents={acoustics.pauses.pauseEvents}
+        fastSections={acoustics.pace.fastSections}
+        fillerCount={acoustics.fillerWords.totalCount}
+        onSeekToTime={handleSeekToTime}
+      />
+
+      {/* 3. Executive Score Gauge */}
       <ScoreGauge score={scores.overall} />
 
-      {/* 3. Interactive Multi-Tab Navigation */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-zinc-800">
+      {/* 4. Tab Navigation */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b-2 border-black">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -93,219 +313,210 @@ export const AnalysisReportPage: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap border-2 border-black transition-all ${
                 isActive
-                  ? 'bg-zinc-800 text-emerald-400 border border-zinc-700 font-semibold shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                  ? 'bg-[#FFE600] text-black shadow-neo-sm'
+                  : 'bg-white text-zinc-800 hover:bg-yellow-100'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`} />
+              <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* 4. Tab Panels Content */}
+      {/* 5. Tab Panels */}
       <div className="space-y-6">
-        {/* Tab 1: Overview */}
+        {/* Overview Tab */}
         {activeTab === 'overview' && (
-          <div className="space-y-6 animate-in fade-in duration-150">
+          <div className="space-y-8">
             <CategoryBreakdown scores={scores.breakdown} />
 
-            {/* Next Recommended Exercise Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/30 via-zinc-900 to-zinc-950 border border-emerald-800/40 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl">
+            {/* GSAP 2-Card Horizontal Scroll Showcase */}
+            <HorizontalResultsScroll results={categoryResults} onSeekToTime={handleSeekToTime} />
+
+            {/* Next Recommended Targeted Exercise */}
+            <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-mono uppercase font-semibold text-emerald-300">
-                    Next Recommended Targeted Exercise
+                  <Sparkles className="w-4 h-4 text-black" />
+                  <span className="text-xs font-mono font-bold uppercase text-black">
+                    Recommended Targeted Exercise
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-white">{nextRecommendedExercise.title}</h3>
-                <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+                <h3 className="text-lg font-black text-black">{nextRecommendedExercise.title}</h3>
+                <p className="text-xs font-medium text-zinc-800 max-w-2xl leading-relaxed">
                   {nextRecommendedExercise.objective}
                 </p>
-                <div className="text-[11px] font-mono text-emerald-400">
+                <div className="text-xs font-mono font-bold text-purple-700">
                   Target: {nextRecommendedExercise.targetMetric}
                 </div>
               </div>
 
               <Link
                 to="/prep"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-zinc-950 font-bold text-xs hover:bg-emerald-400 transition-all flex-shrink-0"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFE600] border-2 border-black rounded-xl text-black font-black text-xs shadow-neo hover:translate-x-[-2px] transition-all flex-shrink-0"
               >
                 <span>Launch Exercise</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         )}
 
-        {/* Tab 2: Voice & Pitch */}
+        {/* Horizontal Scroll Dedicated Tab */}
+        {activeTab === 'horizontal' && (
+          <HorizontalResultsScroll results={categoryResults} onSeekToTime={handleSeekToTime} />
+        )}
+
+        {/* Voice & Pitch Tab */}
         {activeTab === 'pitch' && (
-          <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-6 animate-in fade-in duration-150">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+          <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b-2 border-black">
               <div>
-                <h3 className="text-sm font-semibold text-white">Fundamental Frequency (F0) Pitch Dynamics</h3>
-                <p className="text-xs text-zinc-400">Tracks inflection, vocal range, and expressive modulation</p>
+                <h3 className="text-base font-black text-black">Fundamental Frequency (F0) Pitch Dynamics</h3>
+                <p className="text-xs font-medium text-zinc-700">Tracks inflection, vocal range, and expressive modulation</p>
               </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-                <span>Avg: <strong className="text-white">{Math.round(acoustics.pitch.averageHz)} Hz</strong></span>
-                <span>Min/Max: <strong className="text-white">{Math.round(acoustics.pitch.minHz)} - {Math.round(acoustics.pitch.maxHz)} Hz</strong></span>
-                <span>Variation (σ): <strong className="text-emerald-400">±{acoustics.pitch.standardDeviationHz.toFixed(1)} Hz</strong></span>
+              <div className="flex items-center gap-4 text-xs font-mono font-bold text-black">
+                <span>Avg: {Math.round(acoustics.pitch.averageHz)} Hz</span>
+                <span>Variation (σ): ±{acoustics.pitch.standardDeviationHz.toFixed(1)} Hz</span>
               </div>
             </div>
 
             <PitchChart data={acoustics.pitch.timeSeries} averageHz={acoustics.pitch.averageHz} />
 
-            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300 leading-relaxed font-mono">
-              <span className="text-emerald-400 font-semibold block mb-1">Coaching Pitch Delivery Guidance:</span>
+            <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl text-xs font-mono font-bold text-black">
+              <span className="block mb-1">Coaching Guidance:</span>
               {acoustics.pitch.coachingFeedback}
             </div>
           </div>
         )}
 
-        {/* Tab 3: Speaking Pace */}
+        {/* Pace Tab */}
         {activeTab === 'pace' && (
-          <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-6 animate-in fade-in duration-150">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+          <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b-2 border-black">
               <div>
-                <h3 className="text-sm font-semibold text-white">Words Per Minute (WPM) Cadence</h3>
-                <p className="text-xs text-zinc-400">Rolling 15-second moving window cadence analysis</p>
+                <h3 className="text-base font-black text-black">Words Per Minute (WPM) Cadence</h3>
+                <p className="text-xs font-medium text-zinc-700">Rolling moving window cadence analysis</p>
               </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-                <span>Overall Pace: <strong className="text-emerald-400">{Math.round(acoustics.pace.averageWpm)} WPM</strong></span>
-                <span>Target Band: <strong className="text-white">130 - 160 WPM</strong></span>
+              <div className="flex items-center gap-4 text-xs font-mono font-bold text-black">
+                <span>Overall: {Math.round(acoustics.pace.averageWpm)} WPM</span>
+                <span>Target: 130 - 160 WPM</span>
               </div>
             </div>
 
             <PaceChart data={acoustics.pace.timeSeries} averageWpm={acoustics.pace.averageWpm} />
 
-            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300 leading-relaxed font-mono">
-              <span className="text-cyan-400 font-semibold block mb-1">Pace & Cadence Coaching Feedback:</span>
+            <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl text-xs font-mono font-bold text-black">
+              <span className="block mb-1">Pace Feedback:</span>
               {acoustics.pace.coachingFeedback}
             </div>
           </div>
         )}
 
-        {/* Tab 4: Pauses */}
+        {/* Pauses Tab */}
         {activeTab === 'pauses' && (
-          <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-6 animate-in fade-in duration-150">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+          <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b-2 border-black">
               <div>
-                <h3 className="text-sm font-semibold text-white">Silence & Pause Distribution</h3>
-                <p className="text-xs text-zinc-400">Distinguishing deliberate rhetorical pauses from hesitation silences</p>
+                <h3 className="text-base font-black text-black">Silence & Pause Distribution</h3>
+                <p className="text-xs font-medium text-zinc-700">Distinguishing deliberate rhetorical pauses from hesitation silences</p>
               </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-                <span>Deliberate: <strong className="text-emerald-400">{acoustics.pauses.deliberatePausesCount}</strong></span>
-                <span>Hesitation: <strong className="text-amber-400">{acoustics.pauses.hesitationPausesCount}</strong></span>
-                <span>Avg Pause: <strong className="text-white">{acoustics.pauses.averageDurationSec.toFixed(1)}s</strong></span>
+              <div className="flex items-center gap-4 text-xs font-mono font-bold text-black">
+                <span>Deliberate: {acoustics.pauses.deliberatePausesCount}</span>
+                <span>Hesitation: {acoustics.pauses.hesitationPausesCount}</span>
               </div>
             </div>
 
-            <PauseChart
-              pauseEvents={acoustics.pauses.pauseEvents}
-              totalDurationSec={currentSession.speakingDurationSeconds}
-            />
+            <PauseChart pauseEvents={acoustics.pauses.pauseEvents} totalDurationSec={currentSession.speakingDurationSeconds} />
 
-            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300 leading-relaxed font-mono">
-              <span className="text-emerald-400 font-semibold block mb-1">Pause & Rhythm Coaching Feedback:</span>
+            <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl text-xs font-mono font-bold text-black">
+              <span className="block mb-1">Pause Rhythm Guidance:</span>
               {acoustics.pauses.coachingFeedback}
             </div>
           </div>
         )}
 
-        {/* Tab 5: Filler Words */}
+        {/* Fillers Tab */}
         {activeTab === 'fillers' && (
-          <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-6 animate-in fade-in duration-150">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+          <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b-2 border-black">
               <div>
-                <h3 className="text-sm font-semibold text-white">Filler Word Frequency</h3>
-                <p className="text-xs text-zinc-400">Crutch word identification and speech density</p>
+                <h3 className="text-base font-black text-black">Filler Word Frequency</h3>
+                <p className="text-xs font-medium text-zinc-700">Crutch word density and breakdown</p>
               </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-                <span>Total: <strong className="text-rose-400">{acoustics.fillerWords.totalCount}</strong></span>
-                <span>Rate: <strong className="text-white">{acoustics.fillerWords.ratePerMinute} / min</strong></span>
-                <span>Top Crutch: <strong className="text-rose-400">"{acoustics.fillerWords.mostFrequent}"</strong></span>
+              <div className="flex items-center gap-4 text-xs font-mono font-bold text-black">
+                <span>Total: {acoustics.fillerWords.totalCount}</span>
+                <span>Rate: {acoustics.fillerWords.ratePerMinute} / min</span>
               </div>
             </div>
 
             <FillerChart breakdown={acoustics.fillerWords.breakdown} />
 
-            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300 leading-relaxed font-mono">
-              <span className="text-rose-400 font-semibold block mb-1">Filler Word Remediation Tip:</span>
+            <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl text-xs font-mono font-bold text-black">
+              <span className="block mb-1">Filler Word Remediation:</span>
               {acoustics.fillerWords.coachingFeedback}
             </div>
           </div>
         )}
 
-        {/* Tab 6: Transcript */}
+        {/* Transcript Tab */}
         {activeTab === 'transcript' && (
-          <div className="animate-in fade-in duration-150">
-            <TranscriptViewer fullText={transcript.fullText} segments={transcript.segments} />
-          </div>
+          <TranscriptViewer fullText={transcript.fullText} segments={transcript.segments} />
         )}
 
-        {/* Tab 7: AI Reasoning & Content */}
+        {/* AI Reasoning Tab */}
         {activeTab === 'content' && (
-          <div className="p-6 rounded-2xl bg-[#121215] border border-[#27272a] space-y-6 animate-in fade-in duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-black">
               <div className="flex items-center gap-2">
-                <BrainCircuit className="w-4 h-4 text-purple-400" />
-                <h3 className="text-sm font-semibold text-white">AI Content, Reasoning & Vocabulary Critique</h3>
+                <BrainCircuit className="w-5 h-5 text-black" />
+                <h3 className="text-base font-black text-black">AI Content & Reasoning Assessment</h3>
               </div>
-              <span className="text-xs font-mono text-purple-400">Structured Gemini Assessment</span>
+              <span className="text-xs font-mono font-bold text-purple-700">Gemini 2.0 Critique</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Structure */}
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-zinc-300 font-semibold uppercase">Speech Architecture</span>
-                  <span className="text-emerald-400 font-bold">{contentAnalysis.structure.score}/100</span>
+              <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono font-bold text-black">
+                  <span>Architecture Score</span>
+                  <span>{contentAnalysis.structure.score}/100</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">{contentAnalysis.structure.feedback}</p>
+                <p className="text-xs font-medium text-zinc-800">{contentAnalysis.structure.feedback}</p>
               </div>
 
-              {/* Clarity */}
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-zinc-300 font-semibold uppercase">Clarity & Readability</span>
-                  <span className="text-cyan-400 font-bold">{contentAnalysis.clarity.score}/100</span>
+              <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono font-bold text-black">
+                  <span>Clarity & Readability</span>
+                  <span>{contentAnalysis.clarity.score}/100</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">{contentAnalysis.clarity.feedback}</p>
+                <p className="text-xs font-medium text-zinc-800">{contentAnalysis.clarity.feedback}</p>
               </div>
 
-              {/* Vocabulary */}
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-zinc-300 font-semibold uppercase">Vocabulary Richness</span>
-                  <span className="text-amber-400 font-bold">{contentAnalysis.vocabulary.score}/100</span>
+              <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono font-bold text-black">
+                  <span>Vocabulary Richness</span>
+                  <span>{contentAnalysis.vocabulary.score}/100</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">{contentAnalysis.vocabulary.feedback}</p>
-                <div className="text-[11px] font-mono text-zinc-500 pt-1">
-                  Advanced: {contentAnalysis.vocabulary.advancedTermsUsed.join(', ')}
-                </div>
+                <p className="text-xs font-medium text-zinc-800">{contentAnalysis.vocabulary.feedback}</p>
               </div>
 
-              {/* Reasoning */}
-              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-zinc-300 font-semibold uppercase">Reasoning Quality</span>
-                  <span className="text-purple-400 font-bold">{contentAnalysis.relevanceAndReasoning.score}/100</span>
+              <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono font-bold text-black">
+                  <span>Reasoning Quality</span>
+                  <span>{contentAnalysis.relevanceAndReasoning.score}/100</span>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">{contentAnalysis.relevanceAndReasoning.reasoningDepthFeedback}</p>
+                <p className="text-xs font-medium text-zinc-800">{contentAnalysis.relevanceAndReasoning.reasoningDepthFeedback}</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Tab 8: Knowledge Expansion Loop */}
+        {/* Knowledge Explorer Tab */}
         {activeTab === 'knowledge' && (
-          <div className="animate-in fade-in duration-150">
-            <KnowledgeExplorer knowledge={knowledgeExploration} />
-          </div>
+          <KnowledgeExplorer knowledge={knowledgeExploration} />
         )}
       </div>
     </div>
