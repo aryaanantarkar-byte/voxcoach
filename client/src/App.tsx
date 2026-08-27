@@ -12,6 +12,7 @@ import { PreparationPage } from './pages/PreparationPage';
 import { PracticeRoomPage } from './pages/PracticeRoomPage';
 import { AnalysisReportPage } from './pages/AnalysisReportPage';
 import { ProgressHistoryPage } from './pages/ProgressHistoryPage';
+import { AsciiDemoPage } from './pages/AsciiDemoPage';
 
 export const App: React.FC = () => {
   return (
@@ -31,6 +32,7 @@ export const App: React.FC = () => {
               <Route path="/practice" element={<PracticeRoomPage />} />
               <Route path="/results" element={<AnalysisReportPage />} />
               <Route path="/progress" element={<ProgressHistoryPage />} />
+              <Route path="/ascii" element={<AsciiDemoPage />} />
               {/* Catch-all redirect */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
