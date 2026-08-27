@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
+import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { WaveformCanvas } from '../components/audio/WaveformCanvas';
 import {
   Mic,
@@ -11,31 +12,30 @@ import {
   Square,
   FileText,
   Sparkles,
-  Volume2,
   Shield,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const PracticeRoomPage: React.FC = () => {
-  const { currentTopic, prepNotes } = useSession();
+  const { currentTopic, prepNotes, setRecordedAudioBlob, setRecordedAudioUrl } = useSession();
   const navigate = useNavigate();
 
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [secondsSpoken, setSecondsSpoken] = useState<number>(0);
-  const [showNotesDrawer, setShowNotesDrawer] = useState<boolean>(true);
-  const [micActive, setMicActive] = useState<boolean>(true);
-  const [isProcessingReport, setIsProcessingReport] = useState<boolean>(false);
+  const {
+    isRecording,
+    isPaused,
+    secondsSpoken,
+    micActive,
+    micError,
+    analyser,
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+    toggleMute,
+  } = useAudioRecorder();
 
-  // Live speaking timer
-  useEffect(() => {
-    let interval: any = null;
-    if (isRecording && !isPaused) {
-      interval = setInterval(() => {
-        setSecondsSpoken((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isRecording, isPaused]);
+  const [showNotesDrawer, setShowNotesDrawer] = useState<boolean>(false);
+  const [isProcessingReport, setIsProcessingReport] = useState<boolean>(false);
 
   const formatTimer = (secs: number) => {
     const mins = Math.floor(secs / 60);
@@ -43,33 +43,41 @@ export const PracticeRoomPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${rem.toString().padStart(2, '0')}`;
   };
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    setIsPaused(false);
+  const handleStartRecording = async () => {
+    await startRecording();
   };
 
   const handlePauseResume = () => {
-    setIsPaused(!isPaused);
+    if (isPaused) {
+      resumeRecording();
+    } else {
+      pauseRecording();
+    }
   };
 
-  const handleStopRecording = () => {
-    setIsRecording(false);
-    setIsPaused(false);
+  const handleStopRecording = async () => {
     setIsProcessingReport(true);
+    const blob = await stopRecording();
+    if (blob) {
+      setRecordedAudioBlob(blob);
+      setRecordedAudioUrl(URL.createObjectURL(blob));
+    }
 
-    // Simulate final audio aggregation & acoustic/LLM analysis pipeline
     setTimeout(() => {
       setIsProcessingReport(false);
       navigate('/results');
-    }, 1800);
+    }, 1600);
   };
 
   if (!currentTopic) {
     return (
-      <div className="text-center py-24 space-y-4">
-        <h2 className="text-xl font-bold text-white">No Active Topic</h2>
-        <p className="text-sm text-zinc-400">Please select a topic to begin your speaking practice.</p>
-        <Link to="/topics" className="inline-block px-4 py-2 bg-emerald-500 text-zinc-950 font-semibold rounded-lg text-xs">
+      <div className="max-w-xl mx-auto py-24 text-center space-y-4">
+        <h2 className="text-2xl font-black text-black">No Active Topic</h2>
+        <p className="text-sm font-medium text-zinc-700">Please select a topic to begin your speaking practice.</p>
+        <Link
+          to="/topics"
+          className="inline-block px-5 py-2.5 bg-[#FFE600] border-2 border-black rounded-xl font-bold shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all text-black"
+        >
           Select Topic
         </Link>
       </div>
@@ -77,192 +85,172 @@ export const PracticeRoomPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-10rem)] flex flex-col justify-between py-6 max-w-7xl mx-auto px-4 sm:px-6 font-sans relative">
-      {/* 1. Stage Header: Topic & Active Status */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+    <div className="py-8 max-w-4xl mx-auto px-4 font-sans space-y-6">
+      {/* Mic Permission Error Alert */}
+      {micError && (
+        <div className="p-4 bg-[#FF6B6B] border-2 border-black rounded-xl shadow-neo text-black flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+            <span className="text-xs font-bold">{micError}</span>
+          </div>
+          <button
+            onClick={() => handleStartRecording()}
+            className="px-3 py-1 bg-white border border-black rounded-lg text-xs font-bold hover:bg-yellow-200"
+          >
+            Retry Mic
+          </button>
+        </div>
+      )}
+
+      {/* 1. Stage Header: Topic & Controls */}
+      <div className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 font-semibold">
+            <span className="text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full bg-[#A78BFA] border border-black text-black">
               {currentTopic.category} • {currentTopic.mode}
             </span>
-            <span className="text-xs font-mono text-zinc-400">Target Duration: 3-5 min</span>
+            <span className="text-xs font-bold text-zinc-600 font-mono">Target: 3-5 min</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-black tracking-tight">
             {currentTopic.title}
           </h1>
         </div>
 
-        {/* Live Stage Microphone & Status Pill */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button
-            onClick={() => setMicActive(!micActive)}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-mono flex items-center gap-2 transition-all ${
-              micActive
-                ? 'bg-zinc-900 border-zinc-700 text-emerald-400'
-                : 'bg-rose-950/40 border-rose-800 text-rose-400'
+            onClick={toggleMute}
+            className={`px-3 py-1.5 rounded-xl border-2 border-black text-xs font-bold flex items-center gap-2 shadow-neo-sm transition-all ${
+              micActive ? 'bg-[#51CF66] text-black' : 'bg-[#FF6B6B] text-black'
             }`}
           >
-            {micActive ? <Mic className="w-3.5 h-3.5 text-emerald-400" /> : <MicOff className="w-3.5 h-3.5 text-rose-400" />}
-            <span>Microphone: {micActive ? 'Active' : 'Muted'}</span>
+            {micActive ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+            <span>{micActive ? 'Mic Active' : 'Muted'}</span>
           </button>
 
           <button
             onClick={() => setShowNotesDrawer(!showNotesDrawer)}
-            className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-mono flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-xl bg-white border-2 border-black text-black text-xs font-bold flex items-center gap-1.5 shadow-neo-sm hover:bg-yellow-100"
           >
-            <FileText className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{showNotesDrawer ? 'Hide Notes' : 'Show Notes'}</span>
+            <FileText className="w-4 h-4 text-black" />
+            <span>{showNotesDrawer ? 'Hide Notes' : 'Notes'}</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Center Stage: The Live Audio & Recording Arena */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-6 flex-1 items-stretch">
-        {/* Main Acoustic Visualizer & Stage Card (Span 8 or 12 depending on drawer) */}
-        <div className={`${showNotesDrawer ? 'lg:col-span-8' : 'lg:col-span-12'} p-8 rounded-2xl bg-[#121215] border border-[#27272a] flex flex-col justify-between items-center text-center shadow-2xl relative overflow-hidden transition-all duration-300`}>
-          {/* Status Indicator Bar */}
-          <div className="w-full flex items-center justify-between text-xs font-mono text-zinc-400 pb-4 border-b border-zinc-800/60">
-            <div className="flex items-center gap-2">
+      {/* 2. Main Stage Arena */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className={`${showNotesDrawer ? 'lg:col-span-7' : 'lg:col-span-12'} p-8 bg-white border-2 border-black rounded-2xl shadow-neo flex flex-col justify-between items-center text-center space-y-6`}>
+          {/* Status Indicator */}
+          <div className="w-full flex items-center justify-between text-xs font-mono font-bold pb-3 border-b-2 border-black">
+            <div>
               {isRecording ? (
                 isPaused ? (
-                  <span className="inline-flex items-center gap-1.5 text-amber-400 font-semibold">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                    PAUSED
+                  <span className="inline-flex items-center gap-1.5 text-black px-2.5 py-0.5 rounded-full bg-[#FFE600] border border-black">
+                    <span className="w-2.5 h-2.5 rounded-full bg-black" /> PAUSED
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 text-rose-400 font-semibold animate-pulse">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
-                    RECORDING LIVE
+                  <span className="inline-flex items-center gap-1.5 text-black px-2.5 py-0.5 rounded-full bg-[#FF6B6B] border border-black animate-pulse">
+                    <span className="w-2.5 h-2.5 rounded-full bg-black animate-ping" /> RECORDING LIVE
                   </span>
                 )
               ) : (
-                <span className="inline-flex items-center gap-1.5 text-zinc-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-zinc-600" />
-                  STAGE READY
+                <span className="inline-flex items-center gap-1.5 text-black px-2.5 py-0.5 rounded-full bg-zinc-200 border border-black">
+                  <span className="w-2.5 h-2.5 rounded-full bg-zinc-500" /> STAGE READY
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-zinc-400">
-              <Shield className="w-3.5 h-3.5 text-emerald-400" />
-              <span>In-Memory Stream (Zero Permanent Audio Retention)</span>
+            <div className="flex items-center gap-1.5 text-zinc-600 text-[11px]">
+              <Shield className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Real-Time Mic Stream</span>
             </div>
           </div>
 
-          {/* Centerpiece Timer & Waveform */}
-          <div className="my-auto py-8 w-full max-w-2xl space-y-6">
-            <div className="space-y-1">
-              <span className="text-xs font-mono uppercase text-zinc-500 tracking-wider block">Spoken Duration</span>
-              <div className="text-6xl sm:text-7xl font-extrabold font-mono text-white tracking-wider">
-                {formatTimer(secondsSpoken)}
-              </div>
-            </div>
-
-            {/* 60 FPS HTML5 Canvas Waveform */}
-            <div className="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800/80 shadow-inner">
-              <WaveformCanvas isRecording={isRecording} isPaused={isPaused} height={120} />
-            </div>
-
-            <div className="flex items-center justify-center gap-6 text-xs font-mono text-zinc-500">
-              <span className="flex items-center gap-1.5">
-                <Volume2 className="w-3.5 h-3.5 text-emerald-400" /> Pitch Tracker: F0 Active
-              </span>
-              <span>•</span>
-              <span>Cadence: 130–160 WPM Target</span>
+          {/* Timer Display */}
+          <div className="space-y-1">
+            <span className="text-xs font-black uppercase text-zinc-500 font-mono tracking-wider">Spoken Duration</span>
+            <div className="text-6xl sm:text-7xl font-black font-mono text-black tracking-wider">
+              {formatTimer(secondsSpoken)}
             </div>
           </div>
 
-          {/* Primary Action Controls */}
-          <div className="w-full pt-6 border-t border-zinc-800/60 flex items-center justify-center gap-4">
+          {/* Live Waveform Canvas */}
+          <div className="w-full p-4 bg-[#F7F4EB] border-2 border-black rounded-xl shadow-neo-sm">
+            <WaveformCanvas isRecording={isRecording} isPaused={isPaused} analyser={analyser} height={120} />
+          </div>
+
+          {/* Action Controls */}
+          <div className="w-full pt-4 border-t-2 border-black flex items-center justify-center gap-4">
             {!isRecording ? (
               <button
                 onClick={handleStartRecording}
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-emerald-500 text-zinc-950 font-bold text-sm hover:bg-emerald-400 active:scale-95 transition-all shadow-xl shadow-emerald-500/25"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#FFE600] border-2 border-black font-black text-sm text-black shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
               >
-                <Radio className="w-5 h-5 animate-pulse" />
+                <Radio className="w-5 h-5" />
                 <span>Start Speaking Now</span>
               </button>
             ) : (
               <>
                 <button
                   onClick={handlePauseResume}
-                  className={`inline-flex items-center gap-2 px-5 py-3 rounded-xl font-mono text-xs font-semibold border transition-all ${
-                    isPaused
-                      ? 'bg-emerald-950/50 border-emerald-800 text-emerald-300 hover:bg-emerald-900/50'
-                      : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800'
-                  }`}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white border-2 border-black text-black font-bold text-xs shadow-neo hover:bg-zinc-100 transition-all"
                 >
                   {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
-                  <span>{isPaused ? 'Resume Speech' : 'Pause'}</span>
+                  <span>{isPaused ? 'Resume' : 'Pause'}</span>
                 </button>
 
                 <button
                   onClick={handleStopRecording}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold active:scale-95 transition-all shadow-lg shadow-rose-600/30"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#FF6B6B] border-2 border-black text-black font-bold text-xs shadow-neo hover:bg-red-400 transition-all"
                 >
-                  <Square className="w-4 h-4 fill-white" />
-                  <span>Finish & Analyze Speech</span>
+                  <Square className="w-4 h-4 fill-black" />
+                  <span>Finish & Analyze</span>
                 </button>
               </>
             )}
           </div>
         </div>
 
-        {/* Right Column: Collapsible Preparation Notes Side Drawer (Span 4) */}
+        {/* Collapsible Notes Side Drawer */}
         {showNotesDrawer && (
-          <div className="lg:col-span-4 p-6 rounded-2xl bg-[#121215] border border-[#27272a] flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-cyan-400" />
-                  <h3 className="text-xs font-mono uppercase font-semibold text-zinc-200">Your Prep Notes</h3>
-                </div>
-                <Link to="/prep" className="text-[11px] font-mono text-emerald-400 hover:underline">
-                  Edit Outline
-                </Link>
-              </div>
-
-              {prepNotes && prepNotes.trim() !== '' ? (
-                <pre className="text-xs text-zinc-300 font-mono whitespace-pre-wrap leading-relaxed max-h-[26rem] overflow-y-auto pr-1">
-                  {prepNotes}
-                </pre>
-              ) : (
-                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-500 italic text-center">
-                  No preparation notes drafted. You can speak spontaneously or click "Edit Outline" above.
-                </div>
-              )}
+          <div className="lg:col-span-5 p-6 bg-white border-2 border-black rounded-2xl shadow-neo space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+              <h3 className="text-xs font-black uppercase text-black font-mono">Your Prep Notes</h3>
+              <Link to="/prep" className="text-xs font-bold text-purple-700 hover:underline">
+                Edit Notes
+              </Link>
             </div>
 
-            {/* Quick Delivery Reminders */}
-            <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800/80 space-y-2 text-[11px] font-mono text-zinc-400">
-              <span className="text-zinc-300 font-semibold block">Speaking Delivery Tips:</span>
-              <ul className="space-y-1 text-[11px] text-zinc-400">
-                <li>• Take a 1-sec breath pause before starting.</li>
-                <li>• Anchor transitions with clean silence.</li>
-                <li>• End on a definitive, downward-inflected claim.</li>
-              </ul>
-            </div>
+            {prepNotes && prepNotes.trim() !== '' ? (
+              <pre className="text-xs font-mono text-zinc-800 whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto pr-1">
+                {prepNotes}
+              </pre>
+            ) : (
+              <p className="text-xs italic text-zinc-500 text-center py-4">
+                No preparation notes drafted. You can speak spontaneously or write notes on the prep screen.
+              </p>
+            )}
           </div>
         )}
       </div>
 
-      {/* 3. Processing Modal Overlay */}
+      {/* Processing Modal Overlay */}
       {isProcessingReport && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-[#121215] border border-zinc-800 rounded-2xl max-w-md w-full p-8 text-center space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-950/40 border border-emerald-800/50 mx-auto flex items-center justify-center text-emerald-400">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-4 border-black rounded-2xl max-w-md w-full p-8 text-center space-y-5 shadow-neo-xl">
+            <div className="w-16 h-16 rounded-2xl bg-[#FFE600] border-2 border-black mx-auto flex items-center justify-center text-black shadow-neo-sm">
               <Sparkles className="w-8 h-8 animate-spin" />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white">Aggregating Speech Metrics</h3>
-              <p className="text-xs text-zinc-400 font-mono leading-relaxed">
-                Running YIN Pitch Analysis, WPM Segmentation, Pause Detection, and Gemini Content Evaluation...
+              <h3 className="text-xl font-black text-black">Analyzing Your Speech</h3>
+              <p className="text-xs font-mono text-zinc-700 font-bold">
+                Processing pitch contours, WPM cadence, pause intervals, and AI content reasoning...
               </p>
             </div>
 
-            <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-500 rounded-full animate-pulse w-3/4" />
+            <div className="w-full h-3 bg-zinc-200 border-2 border-black rounded-full overflow-hidden">
+              <div className="h-full bg-[#4ECCD3] animate-pulse w-3/4" />
             </div>
           </div>
         </div>
@@ -270,3 +258,4 @@ export const PracticeRoomPage: React.FC = () => {
     </div>
   );
 };
+

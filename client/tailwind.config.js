@@ -8,48 +8,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        muted: 'var(--muted)',
-        'muted-foreground': 'var(--muted-foreground)',
-        card: 'var(--card)',
-        'card-foreground': 'var(--card-foreground)',
-        border: 'var(--border)',
-        accent: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e',
-          600: '#16a34a',
-        },
-        brand: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+        background: '#F7F4EB',
+        foreground: '#18181B',
+        card: '#FFFFFF',
+        'card-foreground': '#18181B',
+        border: '#000000',
+        neo: {
+          bg: '#F7F4EB',
+          card: '#FFFFFF',
+          yellow: '#FFE600',
+          red: '#FF6B6B',
+          teal: '#4ECCD3',
+          purple: '#A78BFA',
+          pink: '#FFC6FF',
+          green: '#51CF66',
+          black: '#000000',
         }
+      },
+      boxShadow: {
+        'neo-sm': '2px 2px 0px 0px #000000',
+        'neo': '4px 4px 0px 0px #000000',
+        'neo-lg': '6px 6px 0px 0px #000000',
+        'neo-xl': '8px 8px 0px 0px #000000',
+        'neo-hover': '2px 2px 0px 0px #000000',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
-      animation: {
-        'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'wave-bar': 'waveBar 1.2s ease-in-out infinite',
-      },
-      keyframes: {
-        waveBar: {
-          '0%, 100%': { height: '10%' },
-          '50%': { height: '100%' },
-        }
-      }
     },
   },
   plugins: [],
 }
+

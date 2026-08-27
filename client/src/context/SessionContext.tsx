@@ -16,6 +16,10 @@ interface SessionContextType {
   addSessionToHistory: (session: ISpeechSession) => void;
   allTopics: ITopic[];
   addCustomTopic: (topic: ITopic) => void;
+  recordedAudioBlob: Blob | null;
+  setRecordedAudioBlob: (blob: Blob | null) => void;
+  recordedAudioUrl: string | null;
+  setRecordedAudioUrl: (url: string | null) => void;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -33,6 +37,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [prepDurationSeconds, setPrepDurationSeconds] = useState<number>(300); // 5 minutes default
   const [currentSession, setCurrentSession] = useState<ISpeechSession | null>(MOCK_SAMPLE_SESSION);
   const [sessionsHistory, setSessionsHistory] = useState(MOCK_HISTORY_SESSIONS);
+  const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null);
+  const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentTopic) {
@@ -81,6 +87,10 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addSessionToHistory,
         allTopics,
         addCustomTopic,
+        recordedAudioBlob,
+        setRecordedAudioBlob,
+        recordedAudioUrl,
+        setRecordedAudioUrl,
       }}
     >
       {children}
