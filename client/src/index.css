@@ -141,19 +141,3 @@ button:not([class*="bg-"]), a:not([class*="bg-"]) {
   box-shadow: 5px 5px 0 #000000;
 }
 
-/* Dashboard-only cinematic pixel treatment. */
-.dashboard-pixel {
-  padding-inline: clamp(1rem, 3vw, 2rem);
-  max-width: 100% !important;
-  background-color: #090705;
-  background-image: linear-gradient(rgba(112, 66, 31, .16) 1px, transparent 1px), linear-gradient(90deg, rgba(112, 66, 31, .16) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-.dashboard-pixel > :not(:first-child) { max-width: 72rem; margin-inline: auto; }
-.dashboard-pixel [class~="bg-white"], .dashboard-pixel [class~="bg-[#F7F4EB]"] { background-color: #15100d !important; border-color: #523d2c !important; box-shadow: 5px 5px 0 #000 !important; }
-.dashboard-pixel [class~="text-black"] { color: #fff3e7 !important; }
-.dashboard-pixel [class~="text-zinc-800"], .dashboard-pixel [class~="text-zinc-700"], .dashboard-pixel [class~="text-zinc-600"] { color: #c6a992 !important; }
-.dashboard-pixel [class~="border-black"], .dashboard-pixel [class~="border-b-4"], .dashboard-pixel [class~="border-b-2"] { border-color: #523d2c !important; }
-.dashboard-pixel [class~="bg-[#69D2E7]"] { background-color: #d47a35 !important; }
-.dashboard-pixel [class~="bg-[#FFE600]"] { background-color: #ef9f51 !important; }
-.dashboard-pixel [class~="text-purple-700"], .dashboard-pixel [class~="text-blue-700"], .dashboard-pixel [class~="text-emerald-700"], .dashboard-pixel [class~="text-amber-700"] { color: #f0a35d !important; }

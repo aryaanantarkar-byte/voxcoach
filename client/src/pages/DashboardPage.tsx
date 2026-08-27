@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
-import { AsciiCanvas, DEFAULT_ASCII_PARAMS } from '../components/visuals/AsciiCanvas';
 import {
   Sparkles,
   Radio,
@@ -28,17 +27,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-pixel space-y-16 py-10 max-w-6xl mx-auto px-4 font-sans">
-      <section className="relative min-h-[460px] overflow-hidden rounded-[2rem] border border-[#513a2a] bg-[#090705] shadow-[0_24px_80px_rgba(0,0,0,.42)]">
-        <AsciiCanvas params={{ ...DEFAULT_ASCII_PARAMS, renderMode: 'pixel', bgMode: 'solid', bgColor: '#090705', tint: '#d47a35', tintOpacity: 52, overlayBlend: 'screen', brightness: -8, contrast: 132, cellSize: 12, animated: true }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#090705]/95 via-[#090705]/45 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#090705] to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-end p-7 sm:p-10">
-          <span className="mb-4 w-fit border border-[#8c562d] bg-[#1d110a]/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[.22em] text-[#f0a35d]">VoxCoach / session intelligence</span>
-          <h2 className="max-w-3xl text-4xl font-black leading-[.94] tracking-tight text-[#fff3e7] sm:text-6xl">Find the moment<br /><span className="text-[#e4944e]">your voice lands.</span></h2>
-          <p className="mt-5 max-w-lg text-sm font-medium leading-relaxed text-[#c6a992]">A visual readout of pace, pitch, pauses, and the delivery decisions behind your last performance.</p>
-        </div>
-      </section>
+    <div className="space-y-16 py-10 max-w-6xl mx-auto px-4 font-sans">
       {/* 1. Editorial Stage Header */}
       <div className="space-y-4 border-b-4 border-black pb-10">
         <div className="flex items-center gap-3">
@@ -223,3 +212,4 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
+
