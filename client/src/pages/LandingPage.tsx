@@ -19,7 +19,16 @@ import { WaveformCanvas } from '../components/audio/WaveformCanvas';
 
 export const LandingPage: React.FC = () => {
   return (
-    <div className="space-y-24 py-8 font-sans">
+    <div className="relative isolate overflow-hidden bg-[#080d17] font-sans text-white">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2400&q=85')" }}
+      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,13,23,.76)_0%,rgba(8,13,23,.9)_42%,#080d17_92%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_18%,rgba(102,217,201,.18),transparent_32%),radial-gradient(circle_at_18%_36%,rgba(255,220,96,.08),transparent_28%)]" />
+
+      <div className="space-y-24 py-8">
       {/* 1. Hero Section */}
       <section className="relative text-center max-w-4xl mx-auto space-y-8 px-4 pt-8">
         {/* Subtle background glow */}
@@ -211,6 +220,7 @@ export const LandingPage: React.FC = () => {
           <ArrowRight className="w-4 h-4" />
         </Link>
       </section>
+      </div>
     </div>
   );
 };
