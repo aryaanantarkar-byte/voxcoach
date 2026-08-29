@@ -1,215 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
-import {
-  Sparkles,
-  Radio,
-  ArrowRight,
-  Clock,
-  Compass,
-} from 'lucide-react';
+import { Activity, ArrowUpRight, Clock, Compass, Radio, Target, Volume2 } from 'lucide-react';
+import { AsciiCanvas, AsciiEffectParams } from '../components/visuals/AsciiCanvas';
+
+const dashboardAscii: AsciiEffectParams = {
+  src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85',
+  renderMode: 'dither', bgMode: 'blurred', bgColor: '#071015', bgBlur: 12, bgOpacity: 32,
+  cellSize: 9, coverage: 100, invert: false, styleBlend: 'source-over', charSet: 'standard', customChars: '',
+  brightness: 100, contrast: 100, edgeEmphasis: 18, density: 24,
+  toneCurve: [{ x: 0, y: 0 }, { x: 0.28, y: 0.14 }, { x: 0.72, y: 0.86 }, { x: 1, y: 1 }],
+  tint: '#69d2e7', tintOpacity: 22, overlayBlend: 'screen', saturation: 100, grayscale: 62,
+  blurType: 'off', blurAmount: 35,
+  pfx: {
+    vignette: { enabled: true, intensity: 58 }, scanLines: { enabled: true, intensity: 26 }, chromatic: { enabled: true, intensity: 15 },
+    bloom: { enabled: true, intensity: 22 }, filmGrain: { enabled: true, intensity: 12 }, glitch: { enabled: false, intensity: 20 },
+    halftone: { enabled: false, intensity: 20 }, pixelate: { enabled: false, intensity: 15 }, filmDust: { enabled: false, intensity: 20 },
+  },
+  animated: true, animStyle: 'flicker', animSpeed: { enabled: true, intensity: 80 }, animIntensity: { enabled: true, intensity: 30 },
+  lights: { enabled: true, points: [{ x: 0.76, y: 0.18, radius: 220, intensity: 24, color: '#ffdc60' }] },
+  mask: { enabled: false, invert: true, dataUrl: null },
+};
 
 export const DashboardPage: React.FC = () => {
   const { user, sessionsHistory, allTopics, setCurrentTopic } = useSession();
-
   const quickCategories = [
-    { label: 'AI & Automation', category: 'AI', mode: 'debate', desc: 'Technological ethics and labor impact' },
-    { label: 'Climate & Energy', category: 'Environment', mode: 'presentation', desc: 'Nuclear, solar & grid decarbonization' },
-    { label: 'Behavioral Finance', category: 'Finance', mode: 'casual', desc: 'Cognitive biases and economic nudges' },
-    { label: 'Biotech & CRISPR', category: 'Science', mode: 'debate', desc: 'Gene editing and bioethics' },
-    { label: 'Job Interview Pitch', category: 'Interview', mode: 'interview', desc: 'Elevator pitch & behavioral questions' },
-    { label: 'Impromptu Random', category: 'Random', mode: 'impromptu', desc: 'Spontaneous 2-minute topic challenge' },
+    ['AI & Automation', 'AI', 'debate', 'Technological ethics and labor impact'], ['Climate & Energy', 'Environment', 'presentation', 'Nuclear, solar & grid decarbonization'],
+    ['Behavioral Finance', 'Finance', 'casual', 'Cognitive biases and economic nudges'], ['Biotech & CRISPR', 'Science', 'debate', 'Gene editing and bioethics'],
+    ['Job Interview Pitch', 'Interview', 'interview', 'Elevator pitch & behavioral questions'], ['Impromptu Random', 'Random', 'impromptu', 'Spontaneous 2-minute topic challenge'],
   ];
-
-  const handleLaunchTopic = (cat: string) => {
-    const matched = allTopics.find((t) => t.category === cat) || allTopics[0];
-    setCurrentTopic(matched);
-  };
+  const handleLaunchTopic = (category: string) => setCurrentTopic(allTopics.find((topic) => topic.category === category) || allTopics[0]);
 
   return (
-    <div className="space-y-16 py-10 max-w-6xl mx-auto px-4 font-sans">
-      {/* 1. Editorial Stage Header */}
-      <div className="space-y-4 border-b-4 border-black pb-10">
-        <div className="flex items-center gap-3">
-          <span className="px-3 py-1 text-xs font-mono font-bold uppercase bg-[#69D2E7] border-2 border-black text-black shadow-neo-sm">
-            Speaker Command Center
-          </span>
-          <span className="text-xs font-mono font-bold text-zinc-600">
-            Level: Intermediate Speaker
-          </span>
+    <div className="mx-auto max-w-7xl space-y-12 px-4 py-8 font-sans sm:px-8">
+      <section className="relative min-h-[560px] overflow-hidden border-2 border-[#526074] bg-[#071015] shadow-[8px_8px_0_#000]">
+        <div className="absolute inset-0 opacity-90"><AsciiCanvas params={dashboardAscii} /></div>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,21,.98)_0%,rgba(7,16,21,.74)_42%,rgba(7,16,21,.08)_100%)]" />
+        <div className="relative flex min-h-[560px] flex-col justify-between p-6 sm:p-10">
+          <div className="flex items-start justify-between gap-6 text-[#cbd5e1]"><div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.2em]"><span className="h-2 w-2 animate-pulse bg-[#66d9c9]" /> VoxCoach / command center</div><span className="hidden border border-[#526074] px-3 py-1 text-[10px] font-mono uppercase tracking-widest sm:block">Live analysis // 04</span></div>
+          <div className="max-w-2xl"><p className="mb-4 text-xs font-mono uppercase tracking-[0.24em] text-[#66d9c9]">Speaker profile / intermediate</p><h1 className="max-w-xl text-5xl font-black leading-[0.9] tracking-tight text-white sm:text-8xl">Make your voice <span className="text-[#ffdc60]">impossible</span> to miss.</h1><p className="mt-6 max-w-lg text-sm leading-7 text-[#cbd5e1]">Welcome back, {user.name.split(' ')[0]}. Your delivery signal is stabilizing. Continue the session and turn the next idea into a clear argument.</p><Link to="/topics" className="mt-8 inline-flex items-center gap-3 border-2 border-[#ffdc60] bg-[#ffdc60] px-5 py-3 text-xs font-black uppercase tracking-wider text-[#071015] shadow-[4px_4px_0_#000]"><Radio className="h-4 w-4" /> Launch speech session <ArrowUpRight className="h-4 w-4" /></Link></div>
+          <div className="grid max-w-3xl grid-cols-2 gap-px border border-[#526074] bg-[#526074] sm:grid-cols-4">{[['Score', '81', '/100'], ['Cadence', '139', 'WPM'], ['Fillers', '1.8', '/min'], ['Pitch sigma', '28.4', 'Hz']].map(([label, value, unit]) => <div key={label} className="bg-[#071015]/90 p-4 backdrop-blur-sm"><p className="text-[10px] font-mono uppercase tracking-widest text-[#8d9aad]">{label}</p><p className="mt-2 text-2xl font-black text-white">{value}<span className="ml-1 text-[10px] font-mono font-normal text-[#66d9c9]">{unit}</span></p></div>)}</div>
         </div>
+      </section>
 
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-black tracking-tight leading-none uppercase">
-          Master Speech <br />
-          <span className="text-[#69D2E7] bg-black px-3 inline-block shadow-neo">Delivery & Logic.</span>
-        </h1>
+      <section className="grid gap-8 lg:grid-cols-[1.35fr_.65fr]"><div className="border-2 border-black bg-white p-6 shadow-[5px_5px_0_#000] sm:p-8"><div className="mb-8 flex items-center justify-between border-b-2 border-black pb-4"><div className="flex items-center gap-2"><Target className="h-5 w-5" /><h2 className="text-lg font-black uppercase tracking-tight">Signal focus</h2></div><span className="text-[10px] font-mono uppercase text-[#147f76]">Priority 01</span></div><div className="flex items-start gap-4"><div className="mt-1 bg-[#ff7b7b] p-2"><Volume2 className="h-5 w-5" /></div><div><p className="text-xl font-black">Anchor the argument transitions.</p><p className="mt-2 max-w-xl text-sm leading-6 text-zinc-600">Eliminate rising terminal inflections between 00:42-00:48. Your pacing is already in the ideal range; now give each conclusion somewhere to land.</p></div></div><div className="mt-8 flex items-center justify-between border-t border-zinc-200 pt-4 text-xs font-mono"><span className="text-zinc-500">3 sessions until next milestone</span><Link to="/results" className="font-bold text-[#147f76]">Open latest report <ArrowUpRight className="inline h-3 w-3" /></Link></div></div><div className="border-2 border-black bg-[#66d9c9] p-6 shadow-[5px_5px_0_#000] sm:p-8"><Activity className="h-6 w-6" /><p className="mt-10 text-6xl font-black leading-none">05</p><p className="mt-2 text-xs font-mono font-bold uppercase tracking-widest">sessions completed</p><div className="mt-8 h-2 bg-black/15"><div className="h-full w-[72%] bg-black" /></div><p className="mt-3 text-xs font-bold">3-day practice streak / 72% weekly goal</p></div></section>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4">
-          <p className="text-sm sm:text-base font-bold text-zinc-800 max-w-xl leading-relaxed">
-            Welcome back, {user.name.split(' ')[0]}. VoxCoach tracks your fundamental frequency pitch jumps, WPM cadence stability, and rhetorical pauses to elevate your public speaking.
-          </p>
+      <section className="space-y-6"><div className="flex items-end justify-between border-b-2 border-black pb-3"><div className="flex items-center gap-2"><Compass className="h-5 w-5" /><h2 className="text-xl font-black uppercase tracking-tight">Practice arena</h2></div><Link to="/topics" className="text-xs font-mono font-bold text-[#147f76]">View all topics <ArrowUpRight className="inline h-3 w-3" /></Link></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{quickCategories.map(([label, category, mode, description]) => <Link key={category} to="/prep" onClick={() => handleLaunchTopic(category)} className="group border-2 border-black bg-white p-5 shadow-[4px_4px_0_#000]"><div className="flex items-start justify-between gap-3"><h3 className="font-black group-hover:text-[#147f76]">{label}</h3><span className="bg-[#ffdc60] px-2 py-1 text-[9px] font-mono font-bold uppercase">{mode}</span></div><p className="mt-5 min-h-10 text-xs leading-5 text-zinc-600">{description}</p><div className="mt-5 border-t border-black pt-3 text-[10px] font-mono font-bold uppercase">5 min prep <span className="float-right">Launch →</span></div></Link>)}</div></section>
 
-          <Link
-            to="/topics"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-[#FFE600] border-2 border-black text-black font-black text-sm shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex-shrink-0"
-          >
-            <Radio className="w-5 h-5" />
-            <span>Launch Speech Session</span>
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </div>
-
-      {/* 2. Editorial Oversized Numerical Performance Hero */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        {/* Large Score Showcase Panel */}
-        <div className="lg:col-span-7 p-8 bg-white border-2 border-black rounded-3xl shadow-neo space-y-6 flex flex-col justify-between">
-          <div className="flex items-center justify-between pb-4 border-b-2 border-black">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-black" />
-              <span className="text-xs font-mono font-bold uppercase text-black">Latest Speech Score</span>
-            </div>
-            <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[#51CF66] border border-black text-black">
-              +17 Pts Growth
-            </span>
-          </div>
-
-          <div className="space-y-1">
-            <div className="text-7xl sm:text-9xl font-black font-mono text-black tracking-tight leading-none">
-              81<span className="text-3xl text-zinc-500 font-bold">/100</span>
-            </div>
-            <p className="text-xs font-bold text-zinc-700 font-mono pt-2">
-              Calibrated across pitch modulation, pause breaks, and speech reasoning.
-            </p>
-          </div>
-
-          <div className="p-4 bg-[#F7F4EB] border-2 border-black rounded-2xl font-mono text-xs font-bold text-black space-y-1">
-            <span>Primary Focus Target:</span>
-            <p className="text-zinc-700 font-medium">
-              Eliminate rising terminal inflections between 00:42–00:48 and anchor main argument transitions.
-            </p>
-          </div>
-        </div>
-
-        {/* Supporting Metric Columns */}
-        <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-          <div className="p-6 bg-white border-2 border-black rounded-3xl shadow-neo flex flex-col justify-between space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-black">Cadence</span>
-            <div className="text-4xl font-black font-mono text-black">139 <span className="text-xs font-bold text-zinc-600">WPM</span></div>
-            <span className="text-[11px] font-bold text-blue-700 font-mono">Ideal 130–160</span>
-          </div>
-
-          <div className="p-6 bg-white border-2 border-black rounded-3xl shadow-neo flex flex-col justify-between space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-black">Fillers</span>
-            <div className="text-4xl font-black font-mono text-black">1.8 <span className="text-xs font-bold text-zinc-600">/min</span></div>
-            <span className="text-[11px] font-bold text-emerald-700 font-mono">-68% fillers</span>
-          </div>
-
-          <div className="p-6 bg-white border-2 border-black rounded-3xl shadow-neo flex flex-col justify-between space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-black">Pitch σ</span>
-            <div className="text-4xl font-black font-mono text-black">±28.4 <span className="text-xs font-bold text-zinc-600">Hz</span></div>
-            <span className="text-[11px] font-bold text-purple-700 font-mono">Natural Flow</span>
-          </div>
-
-          <div className="p-6 bg-white border-2 border-black rounded-3xl shadow-neo flex flex-col justify-between space-y-2">
-            <span className="text-xs font-mono font-bold uppercase text-black">Streak</span>
-            <div className="text-4xl font-black font-mono text-black">5 <span className="text-xs font-bold text-zinc-600">done</span></div>
-            <span className="text-[11px] font-bold text-amber-700 font-mono">3-Day Streak</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Revealed Section: Quick Practice Modes */}
-      <div className="space-y-6 pt-6">
-        <div className="flex items-center justify-between pb-3 border-b-2 border-black">
-          <div className="flex items-center gap-2">
-            <Compass className="w-5 h-5 text-black" />
-            <h2 className="text-xl font-black text-black tracking-tight">Curated Speech Practice Arena</h2>
-          </div>
-          <Link to="/topics" className="text-xs font-mono font-bold text-purple-700 hover:underline">
-            View All Topics →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quickCategories.map((cat, idx) => (
-            <Link
-              key={idx}
-              to="/prep"
-              onClick={() => handleLaunchTopic(cat.category)}
-              className="p-6 bg-white border-2 border-black rounded-2xl shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex flex-col justify-between space-y-4 group"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-base font-black text-black group-hover:text-purple-700 transition-colors">
-                    {cat.label}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-[#69D2E7] border border-black text-black">
-                    {cat.mode}
-                  </span>
-                </div>
-                <p className="text-xs font-medium text-zinc-700 leading-relaxed">{cat.desc}</p>
-              </div>
-
-              <div className="flex items-center justify-between text-xs font-mono font-bold text-black pt-3 border-t-2 border-black">
-                <span>5-min prep + 3-min speech</span>
-                <span className="group-hover:translate-x-1 transition-transform">Launch →</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* 4. Revealed Section: Recent Speech Sessions Table */}
-      <div className="p-8 bg-white border-2 border-black rounded-3xl shadow-neo space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b-2 border-black">
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-black" />
-            <h3 className="text-xl font-black text-black">Recent Speech History</h3>
-          </div>
-          <Link to="/progress" className="text-xs font-mono font-bold text-purple-700 hover:underline">
-            View Longitudinal History →
-          </Link>
-        </div>
-
-        <div className="space-y-4">
-          {sessionsHistory.slice(0, 4).map((session) => (
-            <div
-              key={session.id}
-              className="p-5 bg-[#F7F4EB] border-2 border-black rounded-2xl shadow-neo-sm hover:translate-x-[-2px] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-black">{session.topicTitle}</span>
-                  <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-[#A78BFA] border border-black text-black">
-                    {session.category}
-                  </span>
-                </div>
-                <div className="flex items-center gap-4 text-xs font-mono font-bold text-zinc-700">
-                  <span>{session.date}</span>
-                  <span>{Math.floor(session.durationSec / 60)}m {session.durationSec % 60}s</span>
-                  <span>{session.wpm} WPM</span>
-                  <span>{session.fillerCount} fillers</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 self-end sm:self-center">
-                <div className="text-right">
-                  <span className="text-xl font-black font-mono text-black">{session.overallScore}</span>
-                  <span className="text-[10px] font-mono font-bold text-zinc-600 block">Score</span>
-                </div>
-                <Link
-                  to="/results"
-                  className="px-4 py-2 bg-[#FFE600] border-2 border-black rounded-xl text-xs font-bold text-black hover:bg-yellow-300 transition-colors shadow-neo-sm"
-                >
-                  View Report
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <section className="border-2 border-black bg-white p-6 shadow-[5px_5px_0_#000] sm:p-8"><div className="mb-6 flex items-center justify-between border-b-2 border-black pb-4"><div className="flex items-center gap-2"><Clock className="h-5 w-5" /><h2 className="text-xl font-black uppercase tracking-tight">Recent signal</h2></div><Link to="/progress" className="text-xs font-mono font-bold text-[#147f76]">Longitudinal history <ArrowUpRight className="inline h-3 w-3" /></Link></div><div className="space-y-3">{sessionsHistory.slice(0, 4).map((session) => <div key={session.id} className="flex flex-col justify-between gap-3 border border-zinc-300 bg-[#f7f4eb] p-4 sm:flex-row sm:items-center"><div><p className="font-black">{session.topicTitle}</p><p className="mt-1 text-[10px] font-mono uppercase text-zinc-500">{session.date} / {Math.floor(session.durationSec / 60)}m {session.durationSec % 60}s / {session.wpm} WPM</p></div><div className="flex items-center justify-between gap-5 sm:justify-end"><span className="font-mono font-black">{session.overallScore}<small className="ml-1 text-[10px] font-normal text-zinc-500">SCORE</small></span><Link to="/results" className="bg-[#ffdc60] px-3 py-2 text-[10px] font-black uppercase">View report</Link></div></div>)}</div></section>
     </div>
   );
 };
-
